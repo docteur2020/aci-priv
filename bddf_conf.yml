@@ -1,0 +1,170 @@
+---
+name: 'RET'
+sub_name: 'BDDF'
+epg_db: /home/x112097/py/dmo/dmoConf/aci/bddfDB/epg.db
+lockfile: /home/x112097/py/dmo/tmp/.bddf_fabric.lck
+
+msc: !include ret_msc_conf.yml
+
+### APIC Configuration
+sites: !include ret_apc_conf.yml
+
+# export route-maps created under l3out to man to allow transit networks. Used with '--magic-man' and '--create-network'
+man_l3out:
+   network: NET_ADV_%VRF%_TRANSIT_MAN
+   route_map:
+      name:  RM_ADV_%VRF%_TRANSIT_MAN
+      subjects:
+       -  M_MAN_TRANSIT_COM
+
+default_subjects:
+  - name: M_MAN_TRANSIT_COM
+    match_type: community
+    community: "regular:as2-nn2:64919:10777"
+
+### default_tenant for sg_apc* scripts 
+default_tenant: TN001
+default_bd_vmac: 02:22:BE:EF:BE:EF
+
+#Prefix to be added to directory names in git repository.
+#Used by sg_apc_create_intf.py
+git_dir_prefix: RET_
+#/APIC Configuration
+
+#### MSC
+#schema_prefix: %prefix%   prefix added to schema name. This keyword is optional
+schema_prefix: BDDF_
+
+#use_location_in_naming: True|False  False is keywork is not present. If True : add Location to the naming of EPGs and BDs. Location is based on template name that must be in at the formation DC_%location%
+# Enabling: use_location_in_naming: implies that EPG and BD naming is based on Vlan numbers
+#BEWARE: NOT IMPLEMENTED YET. DO NOT USE.
+#use_location_in_naming: True
+#azs: mandatory ==> In fact the templates created in a schema
+azs:
+ no_vlan_overlapping:
+  - ['DC_MAR','DC_SEC','DC_ALL']
+
+ def:
+  - name: DC_MAR
+    tenant: TN001
+    sites:
+     - DUB
+     - DC5
+     - DC2
+  - name: DC_SEC
+    tenant: TN001
+    sites:
+     - SC2
+  - name: DC_ALL
+    tenant: TN001
+    sites:
+     - SC2
+     - DUB
+     - DC5
+     - DC2
+
+
+vrf_creation:
+  az: DC_ALL
+
+
+#Epgs: parameters for sg_msc_magic_epg.py
+# if preferred_group is "true" : epgs will be put in preferred group and will only consume the default contract.
+# if "false": not put in preferred group and EPGs provide and consume default contract.
+# contract_schema: schema name where contracts with global or tenant scope are created. Mandatory only if contracts is defined
+# contract_template: default template where to find the contracts
+# contracts: contracts (other than the one to the MAN) automatically added to the EPGS. 
+  #  name: name of the contract
+  # consumer: is the EPG a consumer of the contract
+  # provider: is the EPG a provider of the contract
+epgs:
+  preferred_group: true
+  contract_schema: BDDF_GLOBAL_CONTRACTS
+  contract_template: DC_ALL
+  contracts:
+     -  name: PermitAny_TSM
+        consumer: true
+        provider: false
+
+#bds: default parameters for BDs following templates
+# Currently l2Stretch is supported.
+bds:
+   - templates: [ DC_MAR, DC_ALL ]
+     l2Stretch: True
+   - templates: [ DC_SEC ]
+     l2Stretch: True
+#How default external epgs creation should be handled
+#If this entry is omitted: will use vrf creation.
+#Use by magic keyword on sg_msc_manage_external_epgs.py
+# Why: will find the contracts and VRF in the corresponding template.
+#external_epgs:
+#  schema: BDDF_EXTERNAL_EPGS
+#  azs:
+#     - DC_DC2
+#     - DC_DUB
+#     - DC_SC2
+#     - DC_DC5
+
+
+interfaces:
+  - name: OTV
+    pdom: PDOM_COMMON
+  - name: default
+    pdom: PDOM_TN001
+
+#Used by sg_msc_manage_motv
+motv:
+  pdom: PDOM_COMMON
+  sites:
+    - DC5
+    - DUB
+  vpc: "INTPOL_COMMON_MOTV_VPC"
+
+
+#Used by sg_msc_manage_mrouting_vlans.py
+# To propagate Vlans on this
+# Currently only eth or dpc interfaceis are supported 
+
+mrouting_l2:
+  pdom: PDOM_COMMON
+  type: eth
+  sites:
+      - name: DUB
+        nodeid: "101"
+        eth: 1/4
+      - name: DC5
+        nodeid: "201"
+        eth: 1/4
+
+
+##Used by sg_msc_manage_lrouting_vlans.py
+# To propagate Vlans on this
+# Currently only eth or dpc interfaceis are supported
+lrouting_l2:
+  pdom: PDOM_COMMON
+  type: eth
+  sites: 
+     - name: DC2
+       intfs:
+       - nodeid: "101"
+         eth: 1/8
+       - nodeid: "201"
+         eth: 1/8
+     - name: SC2
+       intfs:
+       - nodeid: "101"
+         eth: 1/8
+       - nodeid: "201"
+         eth: 1/8
+
+#Example with dpc:
+#mrouting_l2:
+#  pdom: PDOM_COMMON
+#  type: dpc
+#  sites:
+#      - name: DUB
+#        dpc: name_of_dpc
+#      - name: DC5
+#        dpc: name_of_dpc
+#/MSC
+
