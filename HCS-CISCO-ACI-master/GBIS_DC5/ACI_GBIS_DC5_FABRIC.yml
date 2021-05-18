@@ -1,0 +1,459 @@
+---
+# =========================================================================================================================================================
+# ACI FABRIC CONFIGURATION
+# =========================================================================================================================================================
+
+fabric_perimeter: "MKT_DC5"
+apic_host: "196.50.129.30" #APIC_1
+
+
+# =========================================================================================================================================================
+# Switch Provisioning 
+# =========================================================================================================================================================
+
+switchs:
+#LEAF 10X
+  - { name: "MKT-BRD-DC5-5B1-0101", nodeId: 101, serial: "FDO22150L09", podId: "1" } 
+  - { name: "MKT-SRV-DC5-5B1-0102", nodeId: 102, serial: "FDO221206MM", podId: "1" } 
+
+#LEAF 20X
+  - { name: "MKT-BRD-DC5-5B1-0201", nodeId: 201, serial: "FDO22150L1P", podId: "1" } 
+  - { name: "MKT-SRV-DC5-5B1-0202", nodeId: 202, serial: "FDO22120TCS", podId: "1" } 
+
+#SPINE 100X
+  - { name: "MKT-SPN-DC5-5B1-1001", nodeId: 1001, serial: "FGE21492XYE", podId: "1" }
+  - { name: "MKT-SPN-DC5-5B1-1002", nodeId: 1002, serial: "FGE21492YCS", podId: "1" }
+  - { name: "MKT-SPN-DC5-5B1-1003", nodeId: 1003, serial: "FGE21462VLK", podId: "1" }
+
+# =========================================================================================================================================================
+# Switch Row/Rack Details 
+# =========================================================================================================================================================
+site: "FR" 
+building: "DC5" 
+floor: "Ground" 
+room: "5B1"  
+
+racks:
+  - { nodeId: "101", rack: "AW20", row: "AW" } # Switch BRD-101
+  - { nodeId: "102", rack: "AW20", row: "AW" } # Switch SRV-102
+  - { nodeId: "1001", rack: "AW20", row: "AW" } # Spine SPN-1001
+# ============================================================================================================================================================
+  - { nodeId: "1002", rack: "AW21", row: "AW" } # Spine SPN-1002
+# ============================================================================================================================================================
+  - { nodeId: "201", rack: "T12", row: "T" } # Switch BRD-201
+  - { nodeId: "202", rack: "T12", row: "T" } # Switch SRV-202
+  - { nodeId: "1003", rack: "T12", row: "T" } # Spine SPN-1003
+
+
+# =========================================================================================================================================================
+# Maintenance Groups
+# =========================================================================================================================================================
+
+mtce_group:
+  Leaf_10x:   { name: "NODES_1XX",  nodeId: [ "101", "102" ] }
+  Leaf_20x:   { name: "NODES_2XX",  nodeId: [ "201", "202" ] }
+  Leaf_70x:   { name: "NODES_7XX",  nodeId: [ "705", "706" ] }
+  Spine_1001: { name: "SPINE_1001", nodeId: [ "1001" ] }
+  Spine_1002: { name: "SPINE_1002", nodeId: [ "1002" ] }
+  Spine_1003: { name: "SPINE_1003", nodeId: [ "1003" ] }
+
+
+# =========================================================================================================================================================
+# Firmware Groups
+# =========================================================================================================================================================
+
+firmware_group:
+  Leaf_10x:   { name: "NODES_1XX",  version: "n9000-13.2(1m)",  nodeId: [ "101", "102" ] }
+  Leaf_20x:   { name: "NODES_2XX",  version: "n9000-13.2(1m)",  nodeId: [ "201", "202" ] }
+  Leaf_70x:   { name: "NODES_7XX",  version: "n9000-13.2(1m)",  nodeId: [ "705", "706" ] }
+  Spine_1001: { name: "SPINE_1001", version: "n9000-13.2(1m)",  nodeId: [ "1001" ] }
+  Spine_1002: { name: "SPINE_1002", version: "n9000-13.2(1m)",  nodeId: [ "1002" ] }
+  Spine_1003: { name: "SPINE_1003", version: "n9000-13.2(1m)",  nodeId: [ "1003" ] }
+
+
+
+# ============================================================================================================================================================
+
+link_levels:
+  - { name: "AUTO_ON", speed: "inherit", auto_neg: "on" }
+  - { name: "100G_AUTO_OFF", speed: "100G", auto_neg: "off" }
+  - { name: "40G_AUTO_OFF", speed: "40G", auto_neg: "off" }
+  - { name: "10G_AUTO_OFF", speed: "10G", auto_neg: "off" }
+  - { name: "1G_AUTO_OFF", speed: "1G", auto_neg: "off" }
+
+cdps:
+  - { name: "CDP_ON", AdminState: "enabled" }
+  - { name: "CDP_OFF", AdminState: "disabled" }
+
+lldps:
+  - { name: "LLDP_ON", RxState: "enabled", TxState: "enabled" }
+  - { name: "LLDP_OFF", RxState: "disabled", TxState: "disabled" }
+
+port_channels:
+  - { name: "LACP_ACTIVE", mode: "active", ctrl: "fast-sel-hot-stdby,graceful-conv,susp-individual" }
+  - { name: "LACP_ACTIVE_SUSPEND_OFF", mode: "active", ctrl: "fast-sel-hot-stdby,graceful-conv" }
+  - { name: "LACP_PASSIVE", mode: "passive", ctrl: "fast-sel-hot-stdby,graceful-conv,susp-individual" }
+  - { name: "LACP_OFF", mode: "off", ctrl: "fast-sel-hot-stdby,graceful-conv,susp-individual" }
+
+mcp:
+  - {name: "MCP_ON", mode: "enabled" }
+  - {name: "MCP_OFF", mode: "disabled" }
+
+storm_control_policy:
+  - { name: "Storm-Control-rate10-burst15", rate: 10, burst: 15 }
+
+spanning_tree_policy:
+  - { name: "stp_bpdu_filter", ctrl: "bpdu-filter"}
+  - { name: "stp_bpdu_guard", ctrl: "bpdu-guard"}  
+  - { name: "stp_bpdu_guard_and_filter", ctrl: "bpdu-filter,bpdu-guard"}
+
+# ============================================================================================================================================================
+    
+tenants:
+  - { name: "TN001", alias: "SGCIB" }
+  - { name: "TN002", alias: "SGSS" }
+  - { name: "TN003", alias: "CGA" }
+
+
+# ============================================================================================================================================================
+
+vrfs:
+
+  - { name: "RVP_ITEC_VRF", tenant: "TN001", bgp_timers: "SGCIB_BGP_TIMERS" }
+  - { name: "RVP_NEWEDGE_VRF", tenant: "TN001", bgp_timers: "SGCIB_BGP_TIMERS" }
+  - { name: "RVP_PRVSHAREDSERVICES_VRF", tenant: "TN001", bgp_timers: "SGCIB_BGP_TIMERS" }
+  - { name: "RVP_SGSS_FR_VRF", tenant: "TN002", bgp_timers: "SGSS_BGP_TIMERS" }
+  - { name: "RVP_SGSS_PAR-HDC_VRF", tenant: "TN002", bgp_timers: "SGSS_BGP_TIMERS" }
+  - { name: "RVP_SGSS_PAR-PDC_VRF", tenant: "TN002", bgp_timers: "SGSS_BGP_TIMERS" }
+
+# ============================================================================================================================================================
+
+# BGP AS for Fabric internal BGP
+bgp_as: "64919"
+
+# BGP Router Reflectors (3 per POD)
+bgp_rrs:
+  - { NodeID: "1001", PodID: "1"}
+  - { NodeID: "1002", PodID: "1"}
+  - { NodeID: "1003", PodID: "1"}
+
+# ============================================================================================================================================================
+
+# VLAN Pools
+vlan_pools:
+  - { name: "VLANP_ALL", allocation: "static"}
+
+vlan_blocks:
+  - { vlan_pool: "VLANP_ALL", vlan_from: "vlan-1", vlan_to: "vlan-3966", allocation: "static" }
+
+phys_doms:
+  - { name: "PDOM_TN001", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "PDOM_TN002", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "PDOM_TN003", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  #- { name: "PDOM_TN004", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "PDOM_COMMON", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+
+ext_routed_doms:
+  - { name: "L3DOM_TN001", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "L3DOM_TN002", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "L3DOM_TN003", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  #- { name: "L3DOM_TN004", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "L3DOM_COMMON", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+
+# ============================================================================================================================================================
+
+aeps:
+  - { name: "AEP_TN001_COMPUTE", domain_type: "phys", domain_name: "PDOM_TN001" }
+  - { name: "AEP_TN001_L2NET", domain_type: "phys", domain_name: "PDOM_TN001" }
+  - { name: "AEP_TN002_COMPUTE", domain_type: "phys", domain_name: "PDOM_TN002" }
+  - { name: "AEP_TN002_L2NET", domain_type: "phys", domain_name: "PDOM_TN002" }
+  - { name: "AEP_TN003_COMPUTE", domain_type: "phys", domain_name: "PDOM_TN003" }
+  - { name: "AEP_TN003_L2NET", domain_type: "phys", domain_name: "PDOM_TN003" }
+  - { name: "AEP_COMMON_COMPUTE", domain_type: "phys", domain_name: "PDOM_COMMON" }
+  - { name: "AEP_COMMON_L2NET", domain_type: "phys", domain_name: "PDOM_COMMON" }
+  - { name: "AEP_TN001_L3NET", domain_type: "l3dom", domain_name: "L3DOM_TN001" }
+  - { name: "AEP_TN002_L3NET", domain_type: "l3dom", domain_name: "L3DOM_TN002" }
+  - { name: "AEP_TN003_L3NET", domain_type: "l3dom", domain_name: "L3DOM_TN003" }
+  - { name: "AEP_COMMON_L3NET", domain_type: "l3dom", domain_name: "L3DOM_COMMON" }
+
+# ============================================================================================================================================================
+
+# ============================================================================================================================================================
+
+bgp_timers:
+  - { name: "SGCIB_BGP_TIMERS", tenant: "TN001", keep_alive: 60, hold_int: 180, }
+  - { name: "SGSS_BGP_TIMERS", tenant: "TN002", keep_alive: 60, hold_int: 180, }
+
+# ============================================================================================================================================================
+
+isis_metric: 32
+
+# ============================================================================================================================================================
+
+contracts:
+  - { name: "PermitAny_RVP_ITEC_VRF", tenant: "TN001" }
+  - { name: "PermitAny_RVP_PRVSHAREDSERVICES_VRF", tenant: "TN001" }
+  - { name: "PermitAny_RVP_NEWEDGE_VRF", tenant: "TN001" }
+  - { name: "PermitAny_RVP_SGSS_FR_VRF", tenant: "TN002" }
+  - { name: "PermitAny_RVP_SGSS_PAR-HDC_VRF", tenant: "TN002" }
+  - { name: "PermitAny_RVP_SGSS_PAR-PDC_VRF", tenant: "TN002" }
+
+# ============================================================================================================================================================
+
+# Access Interface Policy Groups
+
+access_ipgs:
+  - { name: "INTPOL_TN001_COMPUTE", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_L2NET", aaep: "AEP_TN001_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_L3NET", aaep: "AEP_TN001_L3NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN002_COMPUTE", aaep: "AEP_TN002_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN002_L2NET", aaep: "AEP_TN002_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN002_L3NET", aaep: "AEP_TN002_L3NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN003_COMPUTE", aaep: "AEP_TN003_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN003_L2NET", aaep: "AEP_TN003_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN003_L3NET", aaep: "AEP_TN003_L3NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_L2NET", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_L3NET", aaep: "AEP_COMMON_L3NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+
+vpc_ipgs:
+  - { name: "INTPOL_COMMON_OTV1_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "40G_AUTO_OFF", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_L3WK_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "40G_AUTO_OFF", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_MOTV_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "40G_AUTO_OFF", mcp: "MCP_ON" }
+  #- { name: "INTPOL_COMMON_LB1_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  #- { name: "INTPOL_COMMON_N7K1_LB1_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }     
+
+spine_ipgs:
+  - { name: "INTPOL_COMMON_ISN", aaep: "AEP_COMMON_L3NET", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON" }
+
+# ============================================================================================================================================================
+
+intpros:
+  - { name: "INTPRO_BRD_101" }
+  - { name: "INTPRO_BRD_201" }
+  - { name: "INTPRO_BRD_101_201" }
+  - { name: "INTPRO_SRV_102" }
+  - { name: "INTPRO_SRV_202" }
+  - { name: "INTPRO_SRV_102_202" }
+
+# ============================================================================================================================================================
+
+spine_intpros:
+  - { name: "INTPRO_SPN_1001" }
+  - { name: "INTPRO_SPN_1002" }
+  - { name: "INTPRO_SPN_1003" }
+  - { name: "INTPRO_SPN_1001_1002_1003" }
+
+# ============================================================================================================================================================    
+
+single_swpros:
+  - { name: "SWPRO_BRD_101", switch: "BRD_101", node_name: "101", node_from: 101, node_to: 101, intpro: "INTPRO_BRD_101" }
+  - { name: "SWPRO_BRD_201", switch: "BRD_201", node_name: "201", node_from: 201, node_to: 201, intpro: "INTPRO_BRD_201" }
+  - { name: "SWPRO_SRV_102", switch: "SRV_102", node_name: "102", node_from: 102, node_to: 102, intpro: "INTPRO_SRV_102" }
+  - { name: "SWPRO_SRV_202", switch: "SRV_202", node_name: "202", node_from: 202, node_to: 202, intpro: "INTPRO_SRV_202" }
+
+pair_swpros:
+  - { name: "SWPRO_BRD_101_201", switch: "BRD_101_201", node_name: "101_201", node_from: 101, node_to: 201, intpro: "INTPRO_BRD_101_201" }
+  - { name: "SWPRO_SRV_102_202", switch: "SRV_102_202", node_name: "102_202", node_from: 102, node_to: 202, intpro: "INTPRO_SRV_102_202" }
+
+spine_swpros:
+  - { name: "SWPRO_SPN_1001", switch: "SPN_1001", node_name: "1001", infra_name: "ee219928300a6484", node_from: 1001, node_to: 1001, intpro: "INTPRO_SPN_1001" }
+  - { name: "SWPRO_SPN_1002", switch: "SPN_1002", node_name: "1002", infra_name: "ee219928300a6484", node_from: 1002, node_to: 1002, intpro: "INTPRO_SPN_1002" }
+  - { name: "SWPRO_SPN_1003", switch: "SPN_1003", node_name: "1003", infra_name: "ee219928300a6484", node_from: 1003, node_to: 1003, intpro: "INTPRO_SPN_1003" }
+  - { name: "SWPRO_SPN_1001_1002_1003", switch: "SPN_1001_1002_1003", infra_name: "e826f5aa998b5561", node_name: "1001_1002_1003", node_from: 1001, node_to: 1003, intpro: "INTPRO_SPN_1001_1002_1003"  }
+
+# ============================================================================================================================================================
+
+vpc_doms:
+  - { name: "VPC_DOM_001_101_201", domainID: 01, podID: 1, switch1: 101, switch2: 201 }
+  - { name: "VPC_DOM_002_102_202", domainID: 02, podID: 1, switch1: 102, switch2: 202 }
+
+# ============================================================================================================================================================
+
+int_sel_acc:
+  - { name: "INT_1_1", port: 1, ipg: "INTPOL_COMMON_L3NET", intpro: "INTPRO_BRD_101" }
+  - { name: "INT_1_1", port: 1, ipg: "INTPOL_COMMON_L3NET", intpro: "INTPRO_BRD_201" }
+  
+# ============================================================================================================================================================
+
+int_sel_vpc:
+  - { name: "INT_1_3", from_port: 3, to_port: 3, ipg: "INTPOL_COMMON_OTV1_VPC", intpro: "INTPRO_BRD_101_201" }
+  - { name: "INT_1_5", from_port: 5, to_port: 5, ipg: "INTPOL_COMMON_OTV1_VPC", intpro: "INTPRO_BRD_101_201" }
+  - { name: "INT_1_7", from_port: 7, to_port: 7, ipg: "INTPOL_COMMON_L3WK_VPC", intpro: "INTPRO_BRD_101_201" }
+  - { name: "INT_1_9", from_port: 9, to_port: 9, ipg: "INTPOL_COMMON_MOTV_VPC", intpro: "INTPRO_BRD_101_201" }
+  #- { name: "INT_1_2", from_port: 2, to_port: 2, ipg: "INTPOL_COMMON_N7K1_LB1_VPC", intpro: "INTPRO_SRV_102_202" }
+  #- { name: "INT_1_3", from_port: 3, to_port: 3, ipg: "INTPOL_COMMON_LB1_VPC", intpro: "INTPRO_SRV_102_202" }
+      
+# ============================================================================================================================================================
+
+spine_int_sel:
+  - { name: "INT_1_36", card: 1, from_port: 36, to_port: 36, ipg: "INTPOL_COMMON_ISN", intpro: "INTPRO_SPN_1001_1002_1003" }
+  - { name: "INT_2_36", card: 2, from_port: 36, to_port: 36, ipg: "INTPOL_COMMON_ISN", intpro: "INTPRO_SPN_1001_1002_1003" }
+
+# ============================================================================================================================================================
+
+
+oobips:
+  - { NodeID: 1, PodID: 1, IpAddress: "196.50.129.30/24", Gateway: "196.50.129.254" }
+  - { NodeID: 2, PodID: 1, IpAddress: "196.50.129.32/24", Gateway: "196.50.129.254" }
+  - { NodeID: 3, PodID: 1, IpAddress: "196.50.129.34/24", Gateway: "196.50.129.254" }
+  - { NodeID: 4, PodID: 1, IpAddress: "196.50.129.36/24", Gateway: "196.50.129.254" }
+  - { NodeID: 5, PodID: 1, IpAddress: "196.50.129.38/24", Gateway: "196.50.129.254" }
+#
+  - { NodeID: 101, PodID: 1, IpAddress: "196.50.129.43/24", Gateway: "196.50.129.254" }
+  - { NodeID: 201, PodID: 1, IpAddress: "196.50.129.44/24", Gateway: "196.50.129.254" }
+
+#  
+  - { NodeID: 102, PodID: 1, IpAddress: "196.50.129.45/24", Gateway: "196.50.129.254" }
+  - { NodeID: 202, PodID: 1, IpAddress: "196.50.129.46/24", Gateway: "196.50.129.254" }
+
+#
+  - { NodeID: 1001, PodID: 1, IpAddress: "196.50.129.40/24", Gateway: "196.50.129.254" }
+  - { NodeID: 1002, PodID: 1, IpAddress: "196.50.129.41/24", Gateway: "196.50.129.254" }
+  - { NodeID: 1003, PodID: 1, IpAddress: "196.50.129.42/24", Gateway: "196.50.129.254" }
+
+# =========================================================================================================================================================
+# EPG
+# =========================================================================================================================================================
+
+epgs:
+  - { vlan_id: 211, tenant: "TN001", vrf: "RVP_ITEC_VRF", ap: "RVP_ITEC_AP", intersite: "no", vmac: "not-applicable" }
+  - { vlan_id: 213, tenant: "TN001", vrf: "RVP_ITEC_VRF", ap: "RVP_ITEC_AP", intersite: "no", vmac: "not-applicable" }
+  - { vlan_id: 219, tenant: "TN001", vrf: "RVP_ITEC_VRF", ap: "RVP_ITEC_AP", intersite: "no", vmac: "not-applicable" }
+  - { vlan_id: 221, tenant: "TN001", vrf: "RVP_ITEC_VRF", ap: "RVP_ITEC_AP", intersite: "no", vmac: "not-applicable" }
+  - { vlan_id: 222, tenant: "TN001", vrf: "RVP_ITEC_VRF", ap: "RVP_ITEC_AP", intersite: "no", vmac: "not-applicable" }
+
+# ============================================================================================================================================================
+
+bfd:
+  - { name: "SGCIB_BFD_Pol", mode: "enabled", tenant: "TN001" }
+  - { name: "SGCIB_BFD_Pol_NO_ECHO", mode: "disabled", tenant: "TN001" }
+  - { name: "SGSS_BFD_Pol", mode: "enabled", tenant: "TN002" }
+  - { name: "SGSS_BFD_Pol_NO_ECHO", mode: "disabled", tenant: "TN002" }
+  - { name: "CGA_BFD_Pol", mode: "enabled", tenant: "TN003" }
+  - { name: "CGA_BFD_Pol_NO_ECHO", mode: "disabled", tenant: "TN003" }
+
+ 
+# ============================================================================================================================================================
+
+l3out_bgp:
+ - { name: "L3OUT_VRF_RVP_ITEC_MAN", tenant: "TN001", vrf: "RVP_ITEC_VRF", ext_epg: "Routes_RVP_ITEC_to_MAN", domain: "L3DOM_COMMON", contract: "PermitAny_RVP_ITEC_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+ - { name: "L3OUT_VRF_RVP_NEWEDGE_MAN", tenant: "TN001", vrf: "RVP_NEWEDGE_VRF", ext_epg: "Routes_RVP_NEWEDGE_to_MAN", domain: "L3DOM_COMMON", contract: "PermitAny_RVP_NEWEDGE_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+ - { name: "L3OUT_VRF_RVP_PRVSHAREDSERVICES_MAN", tenant: "TN001", vrf: "RVP_PRVSHAREDSERVICES_VRF", ext_epg: "Routes_RVP_PRVSHAREDSERVICES_to_MAN", domain: "L3DOM_COMMON", contract: "PermitAny_RVP_PRVSHAREDSERVICES_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+ - { name: "L3OUT_VRF_RVP_SGSS_FR_MAN", tenant: "TN002", vrf: "RVP_SGSS_FR_VRF", ext_epg: "Routes_RVP_SGSS_FR_to_MAN", domain: "L3DOM_COMMON", contract: "PermitAny_RVP_SGSS_FR_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-HDC_MAN", tenant: "TN002", vrf: "RVP_SGSS_PAR-HDC_VRF", ext_epg: "Routes_RVP_SGSS_PAR-HDC_to_MAN", domain: "L3DOM_COMMON", contract: "PermitAny_RVP_SGSS_PAR-HDC_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-PDC_MAN", tenant: "TN002", vrf: "RVP_SGSS_PAR-PDC_VRF", ext_epg: "Routes_RVP_SGSS_PAR-PDC_VRF_to_MAN", domain: "L3DOM_COMMON", contract: "PermitAny_RVP_SGSS_PAR-PDC_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+
+l3out_nodes:
+ - { name: "L3OUT_VRF_RVP_ITEC_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, rtr_id: 192.49.180.30 }
+ - { name: "L3OUT_VRF_RVP_ITEC_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 192.49.180.31 }
+ - { name: "L3OUT_VRF_RVP_NEWEDGE_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.17.130 }
+ - { name: "L3OUT_VRF_RVP_NEWEDGE_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.17.131 }
+ - { name: "L3OUT_VRF_RVP_PRVSHAREDSERVICES_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.145.130 }
+ - { name: "L3OUT_VRF_RVP_PRVSHAREDSERVICES_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.145.131 }
+ - { name: "L3OUT_VRF_RVP_SGSS_FR_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.5.130 }
+ - { name: "L3OUT_VRF_RVP_SGSS_FR_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.5.131 }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-HDC_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.29.130 }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-HDC_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, rtr_id: 192.4.29.131 }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-PDC_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, rtr_id: 192.49.137.30 }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-PDC_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, rtr_id: 192.49.137.31 }
+
+
+l3out_subints_with_bgp:
+ - { name: "L3OUT_VRF_RVP_ITEC_MAN", subint: "SUB_INT_101_RVP_ITEC_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, ip: "192.4.183.158/30", int: "1/1", vlan: 2540, bgp_nei: 192.4.183.157, remote_as: "64911", bfd: "SGCIB_BFD_Pol", bgp_pass: "INTERCO_RVP_ITEC" }
+ - { name: "L3OUT_VRF_RVP_ITEC_MAN", subint: "SUB_INT_201_RVP_ITEC_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, ip: "192.4.183.162/30", int: "1/1", vlan: 2541, bgp_nei: 192.4.183.161, remote_as: "64911", bfd: "SGCIB_BFD_Pol", bgp_pass: "INTERCO_RVP_ITEC" }
+ 
+ - { name: "L3OUT_VRF_RVP_NEWEDGE_MAN", subint: "SUB_INT_102_RVP_NEWEDGE_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, ip: "192.2.18.250/30", int: "1/1", vlan: 2690, bgp_nei: 192.2.18.249, local_as: "64919", remote_as: "64911", bfd: "SGCIB_BFD_Pol", bgp_pass: "INTERCO_RVP_NEWEDGE" }
+ - { name: "L3OUT_VRF_RVP_NEWEDGE_MAN", subint: "SUB_INT_202_RVP_NEWEDGE_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, ip: "192.2.18.254/30", int: "1/1", vlan: 2691, bgp_nei: 192.2.18.253, local_as: "64919", remote_as: "64911", bfd: "SGCIB_BFD_Pol", bgp_pass: "INTERCO_RVP_NEWEDGE" }  
+
+ - { name: "L3OUT_VRF_RVP_PRVSHAREDSERVICES_MAN", subint: "SUB_INT_102_RVP_PRVSHAREDSERVICES_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, ip: "192.4.148.82/30", int: "1/1", vlan: 2670, bgp_nei: 192.4.148.81, local_as: "64919", remote_as: "64911", bfd: "SGCIB_BFD_Pol", bgp_pass: "INTERCO_RVP_PRVSHAREDSERVICES" }
+ - { name: "L3OUT_VRF_RVP_PRVSHAREDSERVICES_MAN", subint: "SUB_INT_202_RVP_PRVSHAREDSERVICES_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, ip: "192.4.148.86/30", int: "1/1", vlan: 2671, bgp_nei: 192.4.148.85, local_as: "64919", remote_as: "64911", bfd: "SGCIB_BFD_Pol", bgp_pass: "INTERCO_RVP_PRVSHAREDSERVICES" }  
+
+ - { name: "L3OUT_VRF_RVP_SGSS_FR_MAN", subint: "SUB_INT_102_RVP_SGSS_FR_VRF_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 101, ip: "192.2.6.162/30", int: "1/1", vlan: 2680, bgp_nei: 192.2.6.161, local_as: "64919", remote_as: "64911", bfd: "SGSS_BFD_Pol", bgp_pass: "INTERCO_RVP_SGSS_FR" }
+ - { name: "L3OUT_VRF_RVP_SGSS_FR_MAN", subint: "SUB_INT_202_RVP_SGSS_FR_VRF_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, ip: "192.2.6.166/30", int: "1/1", vlan: 2681, bgp_nei: 192.2.6.165, local_as: "64919", remote_as: "64911", bfd: "SGSS_BFD_Pol", bgp_pass: "INTERCO_RVP_SGSS_FR" }  
+
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-HDC_MAN", subint: "SUB_INT_102_RVP_SGSS_PAR-HDC_VRF_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 101, ip: "192.4.4.70/30", int: "1/1", vlan: 2580, bgp_nei: 192.4.4.69, local_as: "64919", remote_as: "64911", bfd: "SGSS_BFD_Pol", bgp_pass: "INTERCO_RVP_SGSS_PAR-HDC" }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-HDC_MAN", subint: "SUB_INT_202_RVP_SGSS_PAR-HDC_VRF_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, ip: "192.4.4.74/30", int: "1/1", vlan: 2581, bgp_nei: 192.4.4.73, local_as: "64919", remote_as: "64911", bfd: "SGSS_BFD_Pol", bgp_pass: "INTERCO_RVP_SGSS_PAR-HDC" }  
+
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-PDC_MAN", subint: "SUB_INT_102_RVP_SGSS_PAR-PDC_VRF_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 101, ip: "192.2.139.30/30", int: "1/1", vlan: 2590, bgp_nei: 192.2.139.29, local_as: "64919", remote_as: "64911", bfd: "SGSS_BFD_Pol", bgp_pass: "INTERCO_RVP_SGSS_PAR-PDC" }
+ - { name: "L3OUT_VRF_RVP_SGSS_PAR-PDC_MAN", subint: "SUB_INT_202_RVP_SGSS_PAR-PDC_VRF_MAN", tenant: "TN002", node_name: "BRD_101_201", node: 201, ip: "192.2.139.34/30", int: "1/1", vlan: 2591, bgp_nei: 192.2.139.33, local_as: "64919", remote_as: "64911", bfd: "SGSS_BFD_Pol", bgp_pass: "INTERCO_RVP_SGSS_PAR-PDC" }  
+
+
+# =========================================================================================================================================================
+# MTU
+# =========================================================================================================================================================
+
+ctrl_mtu: 8350
+fabric_mtu: 8400
+
+# =========================================================================================================================================================
+# NTP
+# =========================================================================================================================================================
+
+ntp_timezone: "p120_Europe-Paris"
+
+ntp_servers:
+  - { name: "HCS_NTP", server: 192.64.10.129, preferred: "yes" }
+  - { name: "HCS_NTP", server: 192.80.10.129, preferred: "no" }
+
+# ============================================================================================================================================================
+# SYSLOG
+# ============================================================================================================================================================
+
+syslog:
+  - { name: "HCS_SYSLOG_SPLUNK", server: 192.80.10.175, severity: "errors" }
+
+# ============================================================================================================================================================
+# SNMP
+# ============================================================================================================================================================
+
+snmp_coll:
+  - { name: "HCS_SNMP_SPECTRUM_PRI", ip: 192.64.10.135, community: "BKe8Tp4", version: "v2c" }
+  - { name: "HCS_SNMP_SPECTRUM_SEC", ip: 192.80.10.135, community: "BKe8Tp4", version: "v2c" }
+  - { name: "HCS_NETSHOT", ip: 192.80.10.182, community: "BKe8Tp4", version: "v2c" }
+
+snmp_pol:  
+  - { name: "SNMP_MKT", snmp_svr: "HCS_SNMP_SPECTRUM_PRI", ip: 192.64.10.135, community: "BKe8Tp4", contact: "HCS Network Team - +33.142131470", location: "FR|DC5|ACI_GBIS|PROD|LAN_DC|ACI_FABRIC|-|-|-" }  
+  - { name: "SNMP_MKT", snmp_svr: "HCS_SNMP_SPECTRUM_SEC", ip: 192.80.10.135, community: "BKe8Tp4", contact: "HCS Network Team - +33.142131470", location: "FR|DC5|ACI_GBIS|PROD|LAN_DC|ACI_FABRIC|-|-|-" } 
+  - { name: "SNMP_MKT", snmp_svr: "HCS_NETSHOT", ip: 192.80.10.182, community: "BKe8Tp4", contact: "HCS Network Team - +33.142131470", location: "FR|DC5|ACI_GBIS|PROD|LAN_DC|ACI_FABRIC|-|-|-" }
+
+snmp_mon:  
+  - { name: "HCS_SNMP_SPECTRUM_PRI" }  
+  - { name: "HCS_SNMP_SPECTRUM_SEC" } 
+  - { name: "HCS_NETSHOT" }
+
+# ============================================================================================================================================================
+# DNS
+# ============================================================================================================================================================
+
+dns_servers:
+  - { ip: "192.32.127.163", preferred: "yes"}
+  - { ip: "192.16.207.80", preferred: "no"}  
+
+dns_domains:
+  - { name: "arpege.socgen", default: "true" }
+
+tacacs_servers:
+
+  - { ip: "192.80.10.160", key: "<6gJ&Ty4" }
+  - { ip: "192.88.10.160", key: "<6gJ&Ty4" }
+
+tacacs_server_group:
+
+  - { name: "HCS_TACACS_Servers", server_ip: 192.80.10.160, order: 1 }
+  - { name: "HCS_TACACS_Servers", server_ip: 192.88.10.160, order: 2 }
+
+tacacs_domain:
+
+  - { name: HCS_TACACS, server_group: "HCS_TACACS_Servers" }
+
+# ============================================================================================================================================================
+ 
+podpol:
+  - { name: "POD_POL_GRP", ntp: "HCS_NTP", snmp: "SNMP_MKT" }
+
+# ============================================================================================================================================================
+# Multisite External Connection
+
+ex_conn:
+
+  - { pod_id: 1, mpod_tep: "13.254.53.7/32", site_id: 3 }

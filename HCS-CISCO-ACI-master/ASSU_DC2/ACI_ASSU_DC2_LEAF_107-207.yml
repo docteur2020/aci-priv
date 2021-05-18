@@ -1,0 +1,1218 @@
+---
+# =========================================================================================================================================================
+# ACI SERVER LEAF CONFIGURATION
+# =========================================================================================================================================================
+
+fabric: "ASSU_DC2"
+apic_host: "196.18.128.243"
+leaf : "107-207"
+
+pod_id: "1"
+tenant: "TN001"
+tenant_alias: "ASSU"
+
+
+# ============================================================================================================================================================
+# INTERFACES CONFIGURATION
+# ============================================================================================================================================================
+
+
+eth107_1_1:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_1:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_2:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_2:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_3:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_3:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_4:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_4:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_5:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_5:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_6:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_6:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_7:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_7:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_8:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_8:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_9:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_9:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_10:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_10:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_11:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_11:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_12:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_12:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_13:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_13:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_14:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_14:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_15:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_15:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_16:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_16:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_17:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "245", "338" ] }
+
+eth207_1_17:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }  
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "245", "338" ] }
+
+
+eth107_1_18:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_18:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_19:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "338" ] }
+
+eth207_1_19:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }  
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "338" ] }
+
+
+eth107_1_20:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_20:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_21:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_21:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_22:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_22:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_23:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_23:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_24:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "338" ] }
+
+eth207_1_24:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }  
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "338" ] }
+
+
+eth107_1_25:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "245", "338" ] }
+
+eth207_1_25:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }  
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "245", "338" ] }
+
+
+eth107_1_26:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "338" ] }
+
+eth207_1_26:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }  
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "338" ] }
+
+
+eth107_1_27:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "245", "338" ] }
+
+eth207_1_27:
+  automation: "on"
+  description: "server"
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "ASSU_AP", mode: "access", vlans: [ "" ] }  
+  config_type_vpc:
+  - { ap: "ASSU_AP", mode: "trunk", vlans: [ "336", "245", "338" ] }
+
+
+eth107_1_28:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_28:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_29:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_29:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_30:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_30:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_31:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_31:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_32:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_32:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_33:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_33:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_34:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_34:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_35:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_35:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_36:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_36:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_37:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_37:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_38:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_38:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_39:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_39:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_40:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_40:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_41:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_41:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_42:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_42:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_43:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_43:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_44:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_44:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_45:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_45:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_46:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_46:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_47:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_47:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+
+eth107_1_48:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+
+eth207_1_48:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "NAAS_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "NAAS_AP", mode: "trunk", vlans: [ "" ] }
+

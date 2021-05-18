@@ -1,0 +1,63 @@
+---
+# =========================================================================================================================================================
+# ACI SERVER LEAF CONFIGURATION
+# =========================================================================================================================================================
+
+fabric: "ASSU_DC2"
+apic_host: "196.18.128.243"
+leaf : "107-207"
+
+tenant: "TN001"
+ap: "ASSU_AP"
+
+
+# ============================================================================================================================================================
+# Access Interfaces to Interface Profiles
+# ============================================================================================================================================================
+
+
+
+# ============================================================================================================================================================
+# Access Static Ports to End Point Groups
+# ============================================================================================================================================================
+    
+
+
+# ============================================================================================================================================================
+# VPC Interfaces Policy Groups
+# ============================================================================================================================================================
+
+vpc_ipgs:
+  - { name: "INTPOL_TN001_LEF_107_207_INT_1_17_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_LEF_107_207_INT_1_19_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_LEF_107_207_INT_1_24_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_LEF_107_207_INT_1_25_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_LEF_107_207_INT_1_26_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_LEF_107_207_INT_1_27_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+
+
+# ============================================================================================================================================================
+# VPC Interfaces to Interface Profiles
+# ============================================================================================================================================================
+    
+int_sel_vpc:
+  - { name: "INT_1_17", from_port: 17, to_port: 17, ipg: "INTPOL_TN001_LEF_107_207_INT_1_17_VPC", intpro: "INTPRO_LEF_107_207" }
+  - { name: "INT_1_19", from_port: 19, to_port: 19, ipg: "INTPOL_TN001_LEF_107_207_INT_1_19_VPC", intpro: "INTPRO_LEF_107_207" }
+  - { name: "INT_1_24", from_port: 24, to_port: 24, ipg: "INTPOL_TN001_LEF_107_207_INT_1_24_VPC", intpro: "INTPRO_LEF_107_207" }
+  - { name: "INT_1_25", from_port: 25, to_port: 25, ipg: "INTPOL_TN001_LEF_107_207_INT_1_25_VPC", intpro: "INTPRO_LEF_107_207" }
+  - { name: "INT_1_26", from_port: 26, to_port: 26, ipg: "INTPOL_TN001_LEF_107_207_INT_1_26_VPC", intpro: "INTPRO_LEF_107_207" }
+  - { name: "INT_1_27", from_port: 27, to_port: 27, ipg: "INTPOL_TN001_LEF_107_207_INT_1_27_VPC", intpro: "INTPRO_LEF_107_207" }
+
+
+# ============================================================================================================================================================
+# VPC Static Ports to End Point Groups
+# ============================================================================================================================================================
+
+epg_vpc:
+  port-107-17: { node: 107, port: "17",  mode: "regular", vlans: [ "336", "245", "338" ] }
+  port-107-19: { node: 107, port: "19",  mode: "regular", vlans: [ "336", "338" ] }
+  port-107-24: { node: 107, port: "24",  mode: "regular", vlans: [ "336", "338" ] }
+  port-107-25: { node: 107, port: "25",  mode: "regular", vlans: [ "336", "245", "338" ] }
+  port-107-26: { node: 107, port: "26",  mode: "regular", vlans: [ "336", "338" ] }
+  port-107-27: { node: 107, port: "27",  mode: "regular", vlans: [ "336", "245", "338" ] }
+

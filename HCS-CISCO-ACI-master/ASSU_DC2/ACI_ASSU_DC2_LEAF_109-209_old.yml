@@ -1,0 +1,103 @@
+---
+# =========================================================================================================================================================
+# ACI SERVER LEAF CONFIGURATION
+# =========================================================================================================================================================
+
+fabric: "ASSU_DC2"
+apic_host: "196.18.128.243"
+leaf : "109-209"
+
+tenant: "TN001"
+ap: "ASSU_AP"
+
+
+# ============================================================================================================================================================
+# Access Interfaces to Interface Profiles
+# ============================================================================================================================================================
+
+int_sel_acc:
+  - { name: "INT_1_38", port: 38, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_39", port: 39, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_40", port: 40, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_41", port: 41, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_42", port: 42, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_43", port: 43, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_44", port: 44, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_45", port: 45, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_46", port: 46, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_47", port: 47, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_48", port: 48, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_109" }
+  - { name: "INT_1_38", port: 38, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_39", port: 39, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_40", port: 40, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_41", port: 41, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_42", port: 42, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_43", port: 43, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_44", port: 44, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_45", port: 45, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_46", port: 46, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_47", port: 47, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+  - { name: "INT_1_48", port: 48, ipg: "INTPOL_TN001_COMPUTE", intpro: "INTPRO_LEF_209" }
+
+
+
+# ============================================================================================================================================================
+# Access Static Ports to End Point Groups
+# ============================================================================================================================================================
+    
+epg_acc:
+  port-109-38: { node: 109, port: "38",  mode: "regular", vlans: [ "367" ] }
+  port-109-38-1: { node: 109, port: "38",  mode: "native", vlans: [ "229" ] }
+  port-209-38: { node: 209, port: "38",  mode: "regular", vlans: [ "367" ] }
+  port-209-38-1: { node: 209, port: "38",  mode: "native", vlans: [ "229" ] }
+  port-109-39: { node: 109, port: "39",  mode: "native", vlans: [ "922" ] }
+  port-209-39: { node: 209, port: "39",  mode: "native", vlans: [ "923" ] }
+  port-109-40: { node: 109, port: "40",  mode: "native", vlans: [ "64" ] }
+  port-209-40: { node: 209, port: "40",  mode: "native", vlans: [ "64" ] }
+  port-109-41: { node: 109, port: "41",  mode: "native", vlans: [ "64" ] }
+  port-209-41: { node: 209, port: "41",  mode: "native", vlans: [ "64" ] }
+  port-109-42: { node: 109, port: "42",  mode: "native", vlans: [ "335" ] }
+  port-209-42: { node: 209, port: "42",  mode: "native", vlans: [ "335" ] }
+  port-109-43: { node: 109, port: "43",  mode: "native", vlans: [ "335" ] }
+  port-209-43: { node: 209, port: "43",  mode: "native", vlans: [ "335" ] }
+  port-109-44: { node: 109, port: "44",  mode: "native", vlans: [ "335" ] }
+  port-209-44: { node: 209, port: "44",  mode: "native", vlans: [ "335" ] }
+  port-109-45: { node: 109, port: "45",  mode: "native", vlans: [ "335" ] }
+  port-209-45: { node: 209, port: "45",  mode: "native", vlans: [ "335" ] }
+  port-109-46: { node: 109, port: "46",  mode: "native", vlans: [ "335" ] }
+  port-209-46: { node: 209, port: "46",  mode: "native", vlans: [ "335" ] }
+  port-109-47: { node: 109, port: "47",  mode: "native", vlans: [ "335" ] }
+  port-209-47: { node: 209, port: "47",  mode: "native", vlans: [ "335" ] }
+  port-109-48: { node: 109, port: "48",  mode: "native", vlans: [ "335" ] }
+  port-209-48: { node: 209, port: "48",  mode: "native", vlans: [ "335" ] }
+
+
+
+# ============================================================================================================================================================
+# VPC Interfaces Policy Groups
+# ============================================================================================================================================================
+
+vpc_ipgs:
+  - { name: "INTPOL_TN001_LEF_109_209_INT_1_1_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_LEF_109_209_INT_1_2_VPC", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+
+
+
+# ============================================================================================================================================================
+# VPC Interfaces to Interface Profiles
+# ============================================================================================================================================================
+    
+int_sel_vpc:
+  - { name: "INT_1_1", from_port: 1, to_port: 1, ipg: "INTPOL_TN001_LEF_109_209_INT_1_1_VPC", intpro: "INTPRO_LEF_109_209" }
+  - { name: "INT_1_2", from_port: 2, to_port: 2, ipg: "INTPOL_TN001_LEF_109_209_INT_1_2_VPC", intpro: "INTPRO_LEF_109_209" }
+
+
+
+# ============================================================================================================================================================
+# VPC Static Ports to End Point Groups
+# ============================================================================================================================================================
+
+epg_vpc:
+  port-109-1: { node: 109, port: "1",  mode: "regular", vlans: [ "230", "338", "376", "377" ] }
+  port-109-2: { node: 109, port: "2",  mode: "regular", vlans: [ "230", "338", "376", "377" ] }
+

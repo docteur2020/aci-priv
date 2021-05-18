@@ -1,0 +1,12 @@
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='link_levels' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t link_levels
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='ifPolicies' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t link_levels,cdps,lldps,port_channels,mcp,storm_control_policy,spanning_tree_policy
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='tenants' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t tenants
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='vrfs' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t vrfs
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='vlan_pool' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t vlan_pools,vlan_blocks
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='phys_doms' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t phys_doms,ext_routed_doms,ext_bridged_doms
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='aaeps' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t aeps
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='isis_metric' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t isis_metric
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='ipgs' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t access_ipgs,vpc_ipgs
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='sw_pro' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t intpros,single_swpros,pair_swpros
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='vpc_doms' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t vpc_doms
+ansible-playbook -i sandboxapicdc.cisco.com,   -e fabric=CISCOSANDBOX -e username='admin'  -e tag_change='epgs' ACI/CORE/HCS_ACI_Fabric_Setup.yml -t epgs

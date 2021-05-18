@@ -1,0 +1,1719 @@
+---
+- name: Playbook for Bring UP ACI Fabric
+  hosts: all
+  connection: local
+  gather_facts: no
+
+  
+# ============================================================================================================================================================
+# Import Fabric Configuration Files
+# ============================================================================================================================================================
+
+  vars:
+    config_file: "/home/Sandro/ACI/{{ fabric }}/ACI_{{ fabric }}_FABRIC.yml"
+    snapshot_tag: "1001" # Replaced by AWX value   
+
+  tasks:
+    - name: Import Main configuration file
+      include_vars:
+        file: "{{ config_file }}" # need to use a variable to set correct path
+      tags: always,vars
+
+
+# Values provided by AWX:
+# - hostname
+# - username
+# - private_key
+
+
+# ============================================================================================================================================================
+# Take a snaphot of current configuration
+# ============================================================================================================================================================
+
+    - name: PRE-SNAPSHOT 
+      aci_rest:
+        validate_certs: no
+        use_proxy: no
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        method: post
+        path: /api/mo/uni.json
+        content: |
+         {"configExportP":{"attributes":{"dn":"uni/fabric/configexp-PRE-{{ snapshot_tag }}",
+         "name":"PRE-{{ snapshot_tag }}","snapshot":"true","adminSt":"triggered","descr":"{{ tag_change }}"}}}
+      tags: always,snapshot
+
+
+    - name: wait
+      wait_for: timeout=3
+ 
+
+# ============================================================================================================================================================
+# Ignore Ack Faults
+# ============================================================================================================================================================
+
+    - name: Ignore Ack Faults via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <healthEvalP dn="uni/fabric/hsPols/hseval" ignoreAckedFaults="yes"/>
+      delegate_to: localhost
+      tags: ack_faults
+
+
+# ============================================================================================================================================================
+# Switch Provisioning
+# >> GUI >> Fabric > Fabric Membership
+# ============================================================================================================================================================
+
+    - name: Switch Provisionning 
+      aci_rest:
+        validate_certs: no
+        use_proxy: no
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        method: post
+        path: /api/mo/uni.json
+        content: |
+          {"fabricNodeIdentP":{"attributes":{"dn":"uni/controller/nodeidentpol/nodep-{{ item.serial}}",
+          "serial":"{{ item.serial }}","nodeId":"{{ item.nodeId }}", "podId":"{{ item.podId }}",
+          "name":"{{ item.name }}"}}}
+      with_items: "{{ switchs }}"
+      when: switchs is defined
+      tags: switchs
+
+
+# ============================================================================================================================================================
+# Maintenance group policy
+# >> GUI >> Admin > Firmware > Fabric Node Firmware
+# ============================================================================================================================================================
+
+    - name: Set Maintenance Groups 
+      aci_rest:
+        validate_certs: no
+        use_proxy: no
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        method: post
+        path: /api/mo/uni.json
+        content: |
+          {
+            "fabricInst" : {
+              "attributes" : {
+                "dn" : "uni/fabric"
+              },
+              "children" : [
+                {
+                  "maintMaintGrp" : {
+                    "attributes" : {
+                      "dn" : "uni/fabric/maintgrp-{{ item[0].name }}",
+                      "name" : "{{ item[0].name }}"
+                    },
+                    "children" : [
+                      {
+                        "fabricNodeBlk" : {
+                          "attributes" : {
+                            "dn" : "uni/fabric/maintgrp-{{ item[0].name }}/nodeblk-blk{{ item[1] }}-{{ item[1] }}",
+                            "name" : "blk{{ item[1] }}-{{ item[1] }}",
+                            "to_" : "{{ item[1] }}",
+                            "from_" : "{{ item[1] }}"
+                          }
+                        }
+                      },
+                      {
+                        "maintRsMgrpp" : {
+                          "attributes" : {
+                            "tnMaintMaintPName" : "{{ item[0].name }}"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "maintMaintP" : {
+                    "attributes" : {
+                      "dn" : "uni/fabric/maintpol-{{ item[0].name }}",
+                      "name" : "{{ item[0].name }}"
+                    },
+                    "children" : [
+                      {
+                        "maintRsPolScheduler" : {
+                          "attributes" : {
+                            "tnTrigSchedPName" : "{{ item[0].name }}"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "trigSchedP" : {
+                    "attributes" : {
+                      "dn" : "uni/fabric/schedp-{{ item[0].name }}",
+                      "name" : "{{ item[0].name }}"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+      with_subelements:
+        - "{{ mtce_group }}"
+        - nodeId
+      when: mtce_group is defined
+      tags: mtce_group
+
+
+# ============================================================================================================================================================
+# Firmware group policy
+# >> GUI >> Admin > Firmware > Fabric Node Firmware
+# ============================================================================================================================================================
+
+    - name: Set Firmware Groups
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.json
+        method: post
+        content: |
+          {"fabricInst":{"attributes":{"dn":"uni/fabric"},
+          "children":[{"firmwareFwGrp":{"attributes":{"dn":"uni/fabric/fwgrp-{{ item[0].name }}","name":"{{ item[0].name }}"},
+          "children":[{"fabricNodeBlk":{"attributes":{"dn":"uni/fabric/fwgrp-{{ item[0].name }}/nodeblk-blk{{ item[1] }}-{{ item[1] }}","name":"blk{{ item[1] }}-{{ item[1] }}","from_":"{{ item[1] }}","to_":"{{ item[1] }}"}}},
+          {"firmwareRsFwgrpp":{"attributes":{"tnFirmwareFwPName":"{{ item[0].name }}"}}}]}},
+          {"firmwareFwP":{"attributes":{"dn":"uni/fabric/fwpol-{{ item[0].name }}","ignoreCompat":"false","name":"{{ item[0].name }}","version":"{{ item[0].version }}"}}}]}}
+      with_subelements:
+        - "{{ firmware_group }}"
+        - nodeId
+      when: firmware_group is defined
+      tags: firmware_group
+
+
+
+# ============================================================================================================================================================
+# DC Building Information
+# ============================================================================================================================================================
+
+    - name: Set Switch Row/Rack Details
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <geoSite descr="" dn="uni/fabric/site-{{ site }}" name="{{ site }}" nameAlias="" ownerKey="" ownerTag="">
+          <geoBuilding descr="" name="{{ building }}" nameAlias="">
+          <geoFloor descr="" name="{{ floor }}" nameAlias="">
+          <geoRoom descr="" name="{{ room }}" nameAlias="">
+          <geoRow descr="" name="{{ item.row }}" nameAlias="">
+          <geoRack descr="" name="{{ item.rack }}" nameAlias="">
+          <geoRsNodeLocation tDn="topology/pod-1/node-{{ item.nodeId }}"/>
+          </geoRack>
+          </geoRow>
+          </geoRoom>
+          </geoFloor>
+          </geoBuilding>
+          </geoSite>
+      with_items: "{{ racks }}"
+      when: racks is defined            
+      tags: racks
+
+
+
+# =========================================================================================================================================================
+# MTU
+# >> GUI >> System > Control Plane MTU
+# >> GUI >> Fabric > Fabric Policies > Fabric L2 MTU Policy
+# =========================================================================================================================================================
+
+    - name: Set System MTU
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraInfra>
+            <infraCPMtuPol CPMtu="{{ ctrl_mtu }}" />
+          </infraInfra>
+      when: ctrl_mtu is defined
+      tags: mtu,system_mtu
+
+
+    - name: Set Fabric MTU
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.json
+        method: post
+        content: |
+          {"l2InstPol":{"attributes":{"dn":"uni/fabric/l2pol-default","fabricMtu":"{{ fabric_mtu}}"}}}
+      when: fabric_mtu is defined
+      tags: mtu,fabric_mtu 
+
+
+# ============================================================================================================================================================
+# NTP policy
+# ============================================================================================================================================================
+
+
+    - name: Add NTP Timezone via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <datetimeFormat descr="" displayFormat="local" dn="uni/fabric/format-default" name="default" nameAlias="" ownerKey="" ownerTag="" showOffset="enabled" tz="{{ ntp_timezone }}"/>
+      when: ntp_timezone is defined
+      tags: ntp,ntp_timezone
+
+
+    - name: Add NTP Server Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <datetimePol StratumValue="8" adminSt="enabled" authSt="disabled" descr="" dn="uni/fabric/time-{{ item.name }}" masterMode="disabled" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="" serverState="disabled">
+            <datetimeNtpProv descr="" keyId="0" maxPoll="6" minPoll="4" name="{{ item.server }}" nameAlias="" preferred="{{ item.preferred }}">
+              <datetimeRsNtpProvToEpg tDn="uni/tn-mgmt/mgmtp-default/oob-default"/>
+            </datetimeNtpProv>
+          </datetimePol>
+      with_items: "{{ ntp_servers }}"
+      when: ntp_servers is defined
+      tags: ntp,ntp_servers
+
+
+# ============================================================================================================================================================
+# SYSLOG
+# ============================================================================================================================================================
+
+    - name: Add SYSLOG Server Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <syslogGroup descr="" dn="uni/fabric/slgroup-{{ item.name }}" format="aci" name="{{ item.name }}" nameAlias="">
+            <syslogRemoteDest adminState="enabled" descr="" format="aci" forwardingFacility="local7" host="{{ item.server }}" name="" nameAlias="" port="514" severity="{{ item.severity }}">
+              <fileRsARemoteHostToEpg tDn="uni/tn-mgmt/mgmtp-default/oob-default"/>
+            </syslogRemoteDest>
+            <syslogProf adminState="enabled" descr="" name="syslog" nameAlias=""/>
+            <syslogFile adminState="enabled" descr="" format="aci" name="" nameAlias="" severity="information"/>
+            <syslogConsole adminState="enabled" descr="" format="aci" name="" nameAlias="" severity="alerts"/>
+          </syslogGroup>
+      with_items: "{{ syslog }}"
+      when: syslog is defined
+      tags: syslog
+
+# ============================================================================================================================================================
+# SNMP
+# ADMIN -> External Data Collectors
+# ============================================================================================================================================================
+
+    - name: Add SNMP Collectors via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <snmpGroup descr="" dn="uni/fabric/snmpgroup-{{ item.name }}" name="{{ item.name }}" nameAlias="">
+            <snmpTrapDest descr="" host="{{ item.ip }}" name="" nameAlias="" notifT="traps" port="162" secName="{{ item.community }}" v3SecLvl="noauth" ver="{{ item.version }}">
+              <fileRsARemoteHostToEpg tDn="uni/tn-mgmt/mgmtp-default/oob-default"/>
+            </snmpTrapDest>
+          </snmpGroup>
+      with_items: "{{ snmp_coll }}"
+      when: snmp_coll is defined
+      tags: snmp,snmp_coll
+
+
+    - name: Add SNMP Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fabricInst>
+            <snmpPol adminSt="enabled" contact="{{ item.contact }}" descr="" dn="uni/fabric/snmppol-{{ item.name }}" loc="{{ item.location }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+              <snmpCommunityP descr="" name="{{ item.community }}" nameAlias=""/>
+              <snmpTrapFwdServerP addr="{{ item.ip }}" annotation="" name="" nameAlias="" port="162"/>
+              <snmpClientGrpP descr="" name="{{ item.snmp_svr }}" nameAlias="">
+                <snmpRsEpg tDn="uni/tn-mgmt/mgmtp-default/oob-default"/>
+              </snmpClientGrpP>
+            </snmpPol>
+          </fabricInst>
+      with_items: "{{ snmp_pol }}"
+      when: snmp_pol is defined
+      tags: snmp,snmp_pol
+
+
+
+    - name: Add SNMP Monitoring via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <monFabricPol annotation="" descr="" dn="uni/fabric/monfab-default" name="default" nameAlias="" ownerKey="" ownerTag="">
+            <snmpSrc annotation="" descr="" incl="events,faults" minSev="info" name="{{ item.name }}" nameAlias="">
+              <snmpRsDestGroup annotation="" tDn="uni/fabric/snmpgroup-{{ item.name }}"/>
+            </snmpSrc>
+          </monFabricPol>
+      with_items: "{{ snmp_mon }}"
+      when: snmp_mon is defined
+      tags: snmp,snmp_mon
+
+
+# ============================================================================================================================================================
+# DNS
+# ============================================================================================================================================================
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Set DNS Domains
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.json
+        method: post
+        content: |
+          {"dnsDomain":{"attributes":{"dn":"uni/fabric/dnsp-default/dom-{{ item.name }}",
+          "name":"{{ item.name }}", "isDefault":"{{ item.default }}"}}}
+      with_items: "{{ dns_domains }}"
+      when: dns_domains is defined
+      tags: dns,dns_domains
+
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Set DNS Server
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.json
+        method: post
+        content: |
+          {"dnsProv":{"attributes":{"dn":"uni/fabric/dnsp-default/prov-[{{ item.ip }}]",
+          "addr":"{{ item.ip }}","preferred":"{{ item.preferred }}"}}}
+      with_items: "{{ dns_servers }}"
+      when: dns_servers is defined
+      tags: dns,dns_servers
+
+# ============================================================================================================================================================
+# To allow SNMP to APICS and allow managment access to switches
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add OOB Contract
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <vzOOBBrCP annotation="" descr="" dn="uni/tn-mgmt/oobbrc-OOB_CONTRACT" name="OOB_CONTRACT" nameAlias="" ownerKey="" ownerTag="" prio="unspecified" scope="context" targetDscp="unspecified">
+            <vzSubj annotation="" consMatchT="AtleastOne" descr="" name="OOB_SUBJECT" nameAlias="" prio="unspecified" provMatchT="AtleastOne" revFltPorts="yes" targetDscp="unspecified">
+              <vzRsSubjFiltAtt action="permit" annotation="" directives="" priorityOverride="default" tnVzFilterName="MGMT_FILTER"/>
+              <vzRsSubjFiltAtt action="permit" annotation="" directives="" priorityOverride="default" tnVzFilterName="SNMP_FILTER"/>
+            </vzSubj>
+          </vzOOBBrCP>
+      tags: oob_con
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add OOB MGMT Filter
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <vzFilter annotation="" descr="" dn="uni/tn-mgmt/flt-MGMT_FILTER" name="MGMT_FILTER" nameAlias="" ownerKey="" ownerTag="">
+            <vzEntry annotation="" applyToFrag="no" arpOpc="unspecified" dFromPort="unspecified" dToPort="unspecified" descr="" etherT="ip" icmpv4T="unspecified" icmpv6T="unspecified" matchDscp="unspecified" name="ALLOW_ALL" nameAlias="" prot="unspecified" sFromPort="unspecified" sToPort="unspecified" stateful="no" tcpRules=""/>
+          </vzFilter>
+      tags: mgmt_filter
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add OOB SNMP Filter
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <vzFilter annotation="" descr="" dn="uni/tn-mgmt/flt-SNMP_FILTER" name="SNMP_FILTER" nameAlias="" ownerKey="" ownerTag="">
+            <vzEntry annotation="" applyToFrag="no" arpOpc="unspecified" dFromPort="162" dToPort="162" descr="" etherT="ip" icmpv4T="unspecified" icmpv6T="unspecified" matchDscp="unspecified" name="SNMP_TRAP" nameAlias="" prot="udp" sFromPort="unspecified" sToPort="unspecified" stateful="no" tcpRules=""/>
+            <vzEntry annotation="" applyToFrag="no" arpOpc="unspecified" dFromPort="161" dToPort="161" descr="" etherT="ip" icmpv4T="unspecified" icmpv6T="unspecified" matchDscp="unspecified" name="SNMP_GET" nameAlias="" prot="udp" sFromPort="unspecified" sToPort="unspecified" stateful="no" tcpRules=""/>
+          </vzFilter>
+      tags: snmp_filter
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add OOB External Management
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <mgmtInstP annotation="" descr="" dn="uni/tn-mgmt/extmgmt-default/instp-OOB_EXT" name="OOB_EXT" nameAlias="" prio="unspecified">
+            <mgmtSubnet annotation="" descr="" ip="0.0.0.0/0" name="" nameAlias=""/>
+            <mgmtRsOoBCons annotation="" prio="unspecified" tnVzOOBBrCPName="OOB_CONTRACT"/>
+          </mgmtInstP>
+      tags: oob_ext
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Contract to OOB EPG
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <mgmtOoB annotation="" descr="" dn="uni/tn-mgmt/mgmtp-default/oob-default" name="default" nameAlias="" prio="unspecified">
+            <mgmtRsOoBProv annotation="" prio="unspecified" tnVzOOBBrCPName="OOB_CONTRACT"/>
+          </mgmtOoB>
+      tags: oob_epg
+      
+
+
+# ============================================================================================================================================================
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Link Level Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fabricHIfPol autoNeg="{{ item.auto_neg }}" descr="" dn="uni/infra/hintfpol-{{ item.name }}" fecMode="inherit" linkDebounce="100" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="" speed="{{ item.speed }}"/>
+      with_items: "{{ link_levels }}"
+#      loop_control:
+#        pause: 1
+      when: link_levels is defined
+      tags: link_levels
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add CDP Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <cdpIfPol adminSt="{{ item.AdminState }}" descr="" dn="uni/infra/cdpIfP-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag=""/>
+      with_items: "{{ cdps }}"
+      when: cdps is defined
+      tags: cdps
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add LLDP Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <lldpIfPol adminRxSt="{{ item.RxState }}" adminTxSt="{{ item.TxState }}" descr="" dn="uni/infra/lldpIfP-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag=""/>
+      with_items: "{{ lldps }}"
+      when: lldps is defined
+      tags: lldps
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Port-Channel Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <lacpLagPol ctrl="{{ item.ctrl }}" descr="" dn="uni/infra/lacplagp-{{ item.name }}" maxLinks="16" minLinks="1" mode="{{ item.mode }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag=""/>
+      with_items: "{{ port_channels }}"
+      when: port_channels is defined
+      tags: port_channels
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add MCP Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <mcpIfPol adminSt="{{ item.mode }}" descr="" dn="uni/infra/mcpIfP-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag=""/>
+      with_items: "{{ mcp }}"
+      when: mcp is defined
+      tags: mcp
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Storm Control Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <stormctrlIfPol burstRate="{{ item.burst }}" descr="" dn="uni/infra/stormctrlifp-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="" rate="{{ item.rate }}" />
+      with_items: "{{ storm_control_policy }}"
+      when: storm_control_policy is defined
+      tags: storm_control_policy
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Spanning Tree Policies via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+         <stpIfPol annotation="" ctrl="{{ item.ctrl }}" descr="" dn="uni/infra/ifPol-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag=""/>
+      with_items: "{{ spanning_tree_policy }}"
+      when: spanning_tree_policy is defined
+      tags: spanning_tree_policy
+
+
+# ============================================================================================================================================================
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Tenants
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvTenant descr="" dn="uni/tn-{{ item.name }}" name="{{ item.name }}" nameAlias="{{ item.alias }}" ownerKey="" ownerTag=""/>
+      with_items: "{{ tenants }}"
+      when: tenants is defined
+      tags: tenants
+
+
+# ============================================================================================================================================================
+
+#    - name: wait
+#      wait_for: timeout=1
+   
+    - name: Add VRF's
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvTenant name="{{ item.tenant }}">
+            <fvCtx name="{{ item.name }}">
+            </fvCtx>
+          </fvTenant>
+      with_items: "{{ vrfs }}"
+#      loop_control:
+#        pause: 1
+      when: vrfs is defined
+      tags: vrfs
+   
+
+# ============================================================================================================================================================
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Set BGP AS via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <bgpInstPol descr="" dn="uni/fabric/bgpInstP-default" name="default" nameAlias="" ownerKey="" ownerTag="">
+            <bgpAsP asn="{{ bgp_as }}" descr="" name="" nameAlias=""/>
+          </bgpInstPol>
+      delegate_to: localhost
+      when: bgp_as is defined
+      tags: bgp_as
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add BGP RRs via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <bgpInstPol descr="" dn="uni/fabric/bgpInstP-default" name="default" nameAlias="" ownerKey="" ownerTag="">
+            <bgpRRP descr="" name="" nameAlias="">
+                <bgpRRNodePEp descr="" id="{{ item.NodeID }}" nameAlias="" podId="{{ item.PodID }}"/>
+             </bgpRRP>
+          </bgpInstPol>
+      with_items: "{{ bgp_rrs }}"
+      when: bgp_rrs is defined
+      tags: bgp_rrs
+
+#    - name: wait
+#      wait_for: timeout=3
+
+# ============================================================================================================================================================      
+
+    - name: Create POD Policy Group via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fabricPodPGrp descr="" dn="uni/fabric/funcprof/podpgrp-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+                <fabricRsCommPol tnCommPolName=""/>
+                <fabricRsPodPGrpBGPRRP tnBgpInstPolName="default"/>
+                <fabricRsPodPGrpCoopP tnCoopPolName=""/>
+                <fabricRsPodPGrpIsisDomP tnIsisDomPolName=""/>
+                <fabricRsSnmpPol tnSnmpPolName="{{ item.snmp }}"/>
+                <fabricRsTimePol tnDatetimePolName="{{ item.ntp }}"/>
+          </fabricPodPGrp>
+      with_items: "{{ podpol }}"
+      when: podpol is defined
+      tags: podpol
+
+# ============================================================================================================================================================
+
+#    - name: wait
+#      wait_for: timeout=2
+
+    - name: Add POD Policy Group to POD Profile via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fabricPodS descr="" dn="uni/fabric/podprof-default/pods-default-typ-ALL" name="default" nameAlias="" ownerKey="" ownerTag="" type="ALL">
+            <fabricRsPodPGrp tDn="uni/fabric/funcprof/podpgrp-{{ item.name }}"/>
+          </fabricPodS>
+      with_items: "{{ podpol }}"
+      when: podpol is defined
+      tags: podpol
+
+
+# ============================================================================================================================================================      
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Enable Port Tracking via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraPortTrackPol adminSt="on" delay="120" descr="" dn="uni/infra/trackEqptFabP-default" minlinks="0" name="default" nameAlias="" ownerKey="" ownerTag=""/>
+      delegate_to: localhost
+
+# ============================================================================================================================================================      
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Enable Rogue EP Control via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <epControlP adminSt="enabled" dn="uni/infra/epCtrlP-default" holdIntvl="1800" name="default" rogueEpDetectIntvl="30" rogueEpDetectMult="6"/>
+      delegate_to: localhost
+
+# ============================================================================================================================================================      
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Enable IP Aging via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <epIpAgingP adminSt="enabled" dn="uni/infra/ipAgingP-default" name="default"/>          
+      delegate_to: localhost
+
+# ============================================================================================================================================================      
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Global System Sessings via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraSetPol dn="uni/infra/settings" enforceSubnetCheck="yes" name="default" unicastXrEpLearnDisable="yes"/>
+      delegate_to: localhost
+
+
+# ============================================================================================================================================================   
+   
+#    - name: wait
+#      wait_for: timeout=1
+
+
+    - name: Add VLAN Pools via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvnsVlanInstP allocMode="{{ item.allocation }}" descr="" dn="uni/infra/vlanns-[{{ item.name }}]-{{ item.allocation }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+          </fvnsVlanInstP>
+      with_items: "{{ vlan_pools }}"
+      when: vlan_pools is defined
+      tags: vlan_pools
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add VLAN Blocks to Pools via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvnsVlanInstP allocMode="{{ item.allocation }}" descr="" dn="uni/infra/vlanns-[{{ item.vlan_pool }}]-{{ item.allocation }}" name="{{ item.vlan_pool }}" nameAlias="" ownerKey="" ownerTag="">
+            <fvnsEncapBlk allocMode="inherit" descr="" from="{{ item.vlan_from }}" name="" nameAlias="" to="{{ item.vlan_to }}"/>
+           </fvnsVlanInstP>
+      with_items: "{{ vlan_blocks }}"
+      when: vlan_blocks is defined
+      tags: vlan_blocks
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Phys Doms via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <physDomP dn="uni/phys-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsVlanNs tDn="uni/infra/vlanns-[{{ item.vlan_pool }}]-{{ item.vlan_pool_type }}"/>
+          </physDomP>
+      with_items: "{{ phys_doms }}"
+      when: phys_doms is defined
+      tags: phys_doms
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add External Routed Doms via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <l3extDomP dn="uni/l3dom-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsVlanNs tDn="uni/infra/vlanns-[{{ item.vlan_pool }}]-{{ item.vlan_pool_type }}"/>
+          </l3extDomP>
+      with_items: "{{ ext_routed_doms }}"
+      when: ext_routed_doms is defined
+      tags: ext_routed_doms
+
+    - name: Add External Bridged Doms via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <l2extDomP dn="uni/l2dom-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsVlanNs tDn="uni/infra/vlanns-[{{ item.vlan_pool }}]-{{ item.vlan_pool_type }}"/>
+          </l2extDomP>
+      with_items: "{{ ext_bridged_doms }}"
+      when: ext_bridged_doms is defined
+      tags: ext_bridged_doms
+      
+#    - name: wait
+#      wait_for: timeout=1
+
+# ============================================================================================================================================================   
+
+    - name: Add AAEP with PDOM or L3DOM via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraAttEntityP dn="uni/infra/attentp-{{ item.name }}" name="{{ item.name }}">
+            <infraRsDomP tDn="uni/{{ item.domain_type }}-{{ item.domain_name }}"/>
+          </infraAttEntityP>
+      with_items: "{{ aeps }}"
+#      loop_control:
+#        pause: 1
+      when: aeps is defined
+      tags: aeps
+
+# ============================================================================================================================================================   
+
+    - name: Add BGP Timers via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvTenant name="{{ item.tenant }}">
+            <bgpCtxPol descr="" dn="uni/tn-{{ item.tenant }}/bgpCtxP-{{ item.name }}" grCtrl="helper" holdIntvl="{{ item.hold_int }}" kaIntvl="{{ item.keep_alive  }}" maxAsLimit="0" name="{{ item.name }}" ownerKey="" ownerTag="" staleIntvl="default"/>
+          </fvTenant>
+      with_items: "{{ bgp_timers }}"
+      when: bgp_timers is defined
+      tags: bgp_timers
+
+#    - name: wait
+#      wait_for: timeout=1
+
+# ============================================================================================================================================================   
+
+    - name: Add ISIS metric via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <isisDomPol redistribMetric="{{ isis_metric }}" dn="uni/fabric/isisDomP-default"/>
+      when: isis_metric is defined
+      tags: isis_metric
+      
+# ============================================================================================================================================================   
+
+    - name: Add VPC Doms via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fabricProtPol descr="" dn="uni/fabric/protpol" name="default" nameAlias="" ownerKey="" ownerTag="" pairT="explicit">
+            <fabricExplicitGEp id="{{ item.domainID }}" name="{{ item.name }}">
+            <fabricRsVpcInstPol tnVpcInstPolName=""/>
+            <fabricNodePEp descr="" id="{{ item.switch1 }}" name="" nameAlias="" podId="{{ item.podID }}"/>
+            <fabricNodePEp descr="" id="{{ item.switch2 }}" name="" nameAlias="" podId="{{ item.podID }}"/>
+          </fabricExplicitGEp>
+          </fabricProtPol>
+      with_items: "{{ vpc_doms }}"    
+      when: vpc_doms is defined
+      tags: vpc_doms
+
+
+# =============================================================================================================================================================
+
+    - name: Add Contract via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <vzBrCP descr="" dn="uni/tn-{{ item.tenant }}/brc-{{ item.name }}" name="{{ item.name }}" ownerKey="" ownerTag="" prio="unspecified" scope="context" targetDscp="unspecified">
+            <vzSubj consMatchT="AtleastOne" descr="" name="{{ item.name }}" prio="unspecified" provMatchT="AtleastOne" revFltPorts="no" targetDscp="unspecified">
+              <vzInTerm>
+                <vzRsFiltAtt action="permit" tnVzFilterName="{{ item.name }}" /> 
+              </vzInTerm>
+            </vzSubj>
+          </vzBrCP>
+      with_items: "{{ contracts }}"   
+      when: contracts is defined
+      tags: contracts
+
+
+# =============================================================================================================================================================
+
+    - name: Add Filter via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <vzFilter annotation="" descr="" dn="uni/tn-{{ item.tenant }}/flt-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <vzEntry annotation="" applyToFrag="no" arpOpc="unspecified" dFromPort="unspecified" dToPort="unspecified" descr="" etherT="unspecified" icmpv4T="unspecified" icmpv6T="unspecified" matchDscp="unspecified" name="{{ item.name }}" nameAlias="" prot="unspecified" sFromPort="unspecified" sToPort="unspecified" stateful="no" tcpRules="" /> 
+          </vzFilter>
+      with_items: "{{ contracts }}"   
+      when: contracts is defined
+      tags: contracts
+
+
+# =============================================================================================================================================================
+
+    - name: Add Interface Policy Groups for Access Ports via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraAccPortGrp descr="" dn="uni/infra/funcprof/accportgrp-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsLldpIfPol tnLldpIfPolName="{{ item.lldp_pol }}"/>
+            <infraRsFcIfPol tnFcIfPolName=""/>
+            <infraRsL2PortAuthPol tnL2PortAuthPolName=""/>
+            <infraRsL2PortSecurityPol tnL2PortSecurityPolName=""/>
+            <infraRsHIfPol tnFabricHIfPolName="{{ item.link_level_pol }}"/>
+            <infraRsQosPfcIfPol tnQosPfcIfPolName=""/>
+            <infraRsCoppIfPol tnCoppIfPolName=""/>
+            <infraRsQosDppIfPol tnQosDppPolName=""/>
+            <infraRsL2IfPol tnL2IfPolName=""/>
+            <infraRsStpIfPol tnStpIfPolName="{{ item.stp }}"/>
+            <infraRsQosIngressDppIfPol tnQosDppPolName=""/>
+            <infraRsStormctrlIfPol tnStormctrlIfPolName="{{ item.storm_control }}"/>
+            <infraRsQosEgressDppIfPol tnQosDppPolName=""/>
+            <infraRsMonIfInfraPol tnMonInfraPolName=""/>
+            <infraRsPoeIfPol tnPoeIfPolName=""/>
+            <infraRsQosSdIfPol tnQosSdIfPolName=""/>
+            <infraRsAttEntP tDn="uni/infra/attentp-{{ item.aaep }}"/>
+            <infraRsMcpIfPol tnMcpIfPolName="{{ item.mcp }}"/>
+            <infraRsCdpIfPol tnCdpIfPolName="{{ item.cdp_pol }}"/>
+          </infraAccPortGrp>
+      with_items: "{{ access_ipgs }}"
+      when: access_ipgs is defined
+      tags: access_ipgs
+
+
+
+    - name: Add Interface Policy Groups for VPC via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraAccBndlGrp descr="" dn="uni/infra/funcprof/accbundle-{{ item.name }}" lagT="node" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsLldpIfPol tnLldpIfPolName="{{ item.lldp_pol }}"/>
+            <infraRsFcIfPol tnFcIfPolName=""/>
+            <infraRsLacpPol tnLacpLagPolName="{{ item.llacp_pol }}"/>
+            <infraRsL2PortAuthPol tnL2PortAuthPolName=""/>
+            <infraRsL2PortSecurityPol tnL2PortSecurityPolName=""/>
+            <infraRsHIfPol tnFabricHIfPolName="{{ item.link_level_pol }}"/>
+            <infraRsQosPfcIfPol tnQosPfcIfPolName=""/>
+            <infraRsCoppIfPol tnCoppIfPolName=""/>
+            <infraRsQosDppIfPol tnQosDppPolName=""/>
+            <infraRsStpIfPol tnStpIfPolName="{{ item.stp }}"/>
+            <infraRsQosIngressDppIfPol tnQosDppPolName=""/>
+            <infraRsStormctrlIfPol tnStormctrlIfPolName="{{ item.storm_control }}"/>
+            <infraRsQosEgressDppIfPol tnQosDppPolName=""/>
+            <infraRsMonIfInfraPol tnMonInfraPolName=""/>
+            <infraRsMcpIfPol tnMcpIfPolName="{{ item.mcp }}"/>
+            <infraRsAttEntP tDn="uni/infra/attentp-{{ item.aaep }}"/>
+            <infraRsQosSdIfPol tnQosSdIfPolName=""/>
+            <infraRsCdpIfPol tnCdpIfPolName="{{ item.cdp_pol }}"/>
+            <infraRsL2IfPol tnL2IfPolName=""/>
+          </infraAccBndlGrp>
+      with_items: "{{ vpc_ipgs }}"
+      when: vpc_ipgs is defined
+      tags: vpc_ipgs
+
+
+
+# =============================================================================================================================================================
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Spine Access Port Policy Group via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraSpAccPortGrp descr="" dn="uni/infra/funcprof/spaccportgrp-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsHIfPol tnFabricHIfPolName="{{ item.link_level_pol }}"/>
+            <infraRsMacsecIfPol tnMacsecIfPolName=""/>
+            <infraRsCoppIfPol tnCoppIfPolName=""/>
+            <infraRsCdpIfPol tnCdpIfPolName="{{ item.cdp_pol }}"/>
+            <infraRsAttEntP tDn="uni/infra/attentp-{{ item.aaep }}"/>
+          </infraSpAccPortGrp>
+      with_items: "{{ spine_ipgs }}"
+      when: spine_ipgs is defined
+      tags: spine_ipgs
+
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add Spine Interface Profiles via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraSpAccPortP annotation="" descr="" dn="uni/infra/spaccportprof-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+          </infraSpAccPortP>
+      with_items: "{{ spine_intpros }}"
+#      loop_control:
+#        pause: 1
+      when: spine_intpros is defined
+      tags: spine_intpros
+
+
+#    - name: wait 
+#      wait_for: timeout=1
+
+    - name: Add Spine Interfaces to Interface Profiles via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraSpAccPortP annotation="" descr="" dn="uni/infra/spaccportprof-{{ item.intpro }}" name="{{ item.intpro }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraSHPortS annotation="" descr="" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="" type="range">
+              <infraRsSpAccGrp annotation="" tDn="uni/infra/funcprof/spaccportgrp-{{ item.ipg }}"/>
+              <infraPortBlk annotation="" descr="" fromCard="{{ item.card }}" fromPort="{{ item.from_port }}" name="block2" nameAlias="" toCard="{{ item.card }}" toPort="{{ item.to_port }}"/>
+            </infraSHPortS>
+          </infraSpAccPortP>
+      with_items: "{{ spine_int_sel }}"
+      when: spine_int_sel is defined
+      tags: spine_int_sel
+
+
+# =============================================================================================================================================================
+
+    - name: Add Interface Profiles via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraAccPortP descr="" dn="uni/infra/accportprof-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag=""/>
+      with_items: "{{ intpros }}"
+#      loop_control:
+#        pause: 1
+      when: intpros is defined
+      tags: intpros
+
+
+#    - name: wait 
+#      wait_for: timeout=1
+
+    - name: Add Single Switch Profiles via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraNodeP descr="" dn="uni/infra/nprof-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsAccPortP tDn="uni/infra/accportprof-{{ item.intpro }}"/>
+            <infraLeafS descr="" name="{{ item.switch }}" nameAlias="" ownerKey="" ownerTag="" type="range">
+              <infraNodeBlk descr="" from_="{{ item.node_from }}" name="{{ item.node_name }}" nameAlias="" to_="{{ item.node_to }}"/>
+            </infraLeafS>
+          </infraNodeP>
+      with_items: "{{ single_swpros }}"
+#      loop_control:
+#        pause: 1
+      when: single_swpros is defined
+      tags: single_swpros
+
+
+#    - name: wait 
+#      wait_for: timeout=1
+
+    - name: Add Pair Switch Profiles via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraNodeP descr="" dn="uni/infra/nprof-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraRsAccPortP tDn="uni/infra/accportprof-{{ item.intpro }}"/>
+            <infraLeafS descr="" name="{{ item.switch }}" nameAlias="" ownerKey="" ownerTag="" type="range">
+              <infraNodeBlk descr="" from_="{{ item.node_from }}" name="1" nameAlias="" to_="{{ item.node_from }}"/>
+              <infraNodeBlk descr="" from_="{{ item.node_to }}" name="2" nameAlias="" to_="{{ item.node_to }}"/>
+            </infraLeafS>
+          </infraNodeP>
+      with_items: "{{ pair_swpros }}"
+#      loop_control:
+#        pause: 1
+      when: pair_swpros is defined
+      tags: pair_swpros
+
+#    - name: wait
+#      wait_for: timeout=1
+
+
+# =========================================================================================================================================================
+# Spine switch Profiles
+# >> GUI >> Fabric > External Access Policies > Switches > Spine Switches > Profiles
+# =========================================================================================================================================================
+
+    - name: Add Spine Switch Profiles via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraSpineP descr="" dn="uni/infra/spprof-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <infraSpineS descr="" name="{{ item.switch }}" nameAlias="" ownerKey="" ownerTag="" type="range">
+              <infraNodeBlk descr="" from_="{{ item.node_from }}" name="{{ item.infra_name }}" nameAlias="" to_="{{ item.node_to }}"/>
+            </infraSpineS>
+            <infraRsSpAccPortP tDn="uni/infra/spaccportprof-{{ item.intpro }}"/>
+          </infraSpineP>
+      with_items: "{{ spine_swpros }}"
+      when: spine_swpros is defined
+      tags: spine_swpros
+
+
+
+# =============================================================================================================================================================
+
+    - name: Set VPC Interfaces to Interface Profiles
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        use_proxy: no        
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <infraAccPortP ownerTag="" ownerKey=""  name="{{ item.intpro }}" dn="uni/infra/accportprof-{{ item.intpro }}" descr="" >
+            <infraHPortS ownerTag="" ownerKey="" name="{{ item.name }}" descr=""  type="range">
+              <infraRsAccBaseGrp tDn="uni/infra/funcprof/accbundle-{{ item.ipg }}" fexId="101"/>
+              <infraPortBlk name="block2" descr="" toPort="{{ item.to_port }}" toCard="1" fromPort="{{ item.from_port }}" fromCard="1"/>
+            </infraHPortS>
+          </infraAccPortP>
+      with_items: "{{ int_sel_vpc }}"
+      when: int_sel_vpc is defined      
+#      loop_control:
+#        pause: 1  
+      tags: int_sel_vpc
+
+# =============================================================================================================================================================
+
+    - name: Set Access Interfaces to Interface Profiles
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        use_proxy: no        
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+         <infraAccPortP ownerTag="" ownerKey=""  name="{{ item.intpro }}" dn="uni/infra/accportprof-{{ item.intpro }}" descr="" >
+          <infraHPortS ownerTag="" ownerKey="" name="{{ item.name }}" descr=""  type="range">
+           <infraRsAccBaseGrp tDn="uni/infra/funcprof/accportgrp-{{ item.ipg }}" fexId="101"/>
+            <infraPortBlk name="block2" descr="" toPort="{{ item.port }}" toCard="1" fromPort="{{ item.port }}" fromCard="1"/>
+           </infraHPortS>
+         </infraAccPortP>
+      with_items: "{{ int_sel_acc }}"
+      when: int_sel_acc is defined
+#      loop_control:
+#        pause: 1    
+      tags: int_sel_acc
+
+# =============================================================================================================================================================
+
+    - name: Add OOB IP Profiles via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <mgmtRsOoBStNode addr="{{ item.IpAddress }}" dn="uni/tn-mgmt/mgmtp-default/oob-default/rsooBStNode-[topology/pod-{{ item.PodID }}/node-{{ item.NodeID }}]" gw="{{ item.Gateway }}" tDn="topology/pod-{{ item.PodID }}/node-{{ item.NodeID }}" v6Addr="::" v6Gw="::"/>
+      with_items: "{{ oobips }}"
+#      loop_control:
+#        pause: 1
+      when: oobips is defined
+      tags: oobips
+
+#    - name: wait
+#      wait_for: timeout=1
+
+# =============================================================================================================================================================
+    
+    - name: Add BFD Policy via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <bfdIfPol adminSt="enabled" ctrl="" descr="" detectMult="3" dn="uni/tn-{{ item.tenant }}/bfdIfPol-{{ item.name }}" echoAdminSt="{{ item.mode }}" echoRxIntvl="750" minRxIntvl="750" minTxIntvl="750" name="{{ item.name }}" ownerKey="" ownerTag=""/>
+      with_items: "{{ bfd }}"
+      when: bfd is defined
+      tags: bfd
+
+
+# =========================================================================================================================================================
+# EPG , this task create AP automatically
+# =========================================================================================================================================================
+
+
+    - name: Add EPGs and BDs via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        use_proxy: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvTenant name="{{ item.tenant }}">
+            <fvAp name="{{ item.ap }}">
+                <fvAEPg descr="" dn="uni/tn-{{ item.tenant }}/ap-{{ item.ap }}/epg-VLAN_{{ item.vlan_id }}_EPG" exceptionTag="" floodOnEncap="disabled" fwdCtrl="" isAttrBasedEPg="no" matchT="AtleastOne" name="VLAN_{{ item.vlan_id }}_EPG" nameAlias="" pcEnfPref="unenforced" prefGrMemb="exclude" prio="unspecified">
+                  <fvRsDomAtt resImedcy="immediate" switchingMode="native" tDn="uni/phys-PDOM_COMMON" annotation="orchestrator:msc" instrImedcy="lazy" />
+                  <fvRsDomAtt resImedcy="immediate" switchingMode="native" tDn="uni/phys-PDOM_{{ item.tenant }}" annotation="orchestrator:msc" instrImedcy="lazy" />
+                  <fvRsPathAtt tDn="topology/pod-1/protpaths-101-201/pathep-[INTPOL_COMMON_OTV1_VPC]" mode="regular" annotation="orchestrator:msc" instrImedcy="lazy" encap="vlan-{{ item.vlan_id }}" />
+                  <fvRsProv tnVzBrCPName="PermitAny_{{ item.vrf }}" annotation="orchestrator:msc" matchT="AtleastOne" />
+                  <fvRsCons annotation="orchestrator:msc" tnVzBrCPName="PermitAny_{{ item.vrf }}" />
+                  <fvRsBd annotation="" tnFvBDName="BD_{{ item.vlan_id }}" />
+                </fvAEPg>
+            </fvAp>
+            <fvBD name="BD_{{ item.vlan_id }}" OptimizeWanBandwidth="yes" mcastAllow="no" intersiteBumTrafficAllow="{{ item.intersite }}" unkMcastAct="flood" multiDstPktAct="bd-flood" type="regular" epClear="no" unicastRoute="yes" limitIpLearnToSubnets="yes" ipLearning="yes" arpFlood="yes" intersiteL2Stretch="{{ item.intersite }}" unkMacUcastAct="flood" annotation="orchestrator:msc" vmac="{{ item.vmac }}">
+              <fvRsCtx tnFvCtxName="{{ item.vrf }}" />
+            </fvBD>
+          </fvTenant>
+      with_items: "{{ epgs }}"
+#      loop_control:
+#        pause: 1
+      when: epgs is defined
+      tags: epgs
+
+
+#    - name: wait
+#      wait_for: timeout=1
+
+
+# =========================================================================================================================================================
+# Subnets
+# =========================================================================================================================================================
+
+
+    - name: Add Subnets via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        use_proxy: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvTenant name="{{ item.tenant }}">
+            <fvBD dn="uni/tn-{{ item.tenant }}/BD-VLAN_{{ item.vlan_id }}_BD">
+                <fvSubnet preferred="{{ item.pref }}" ip="{{ item.ip }}" virtual="no" scope="{{ item.scope }}" annotation="orchestrator:msc" />
+            </fvBD>
+          </fvTenant>
+      with_items: "{{ subnet }}"
+#      loop_control:
+#        pause: 1
+      when: subnet is defined
+      tags: subnet
+
+
+#    - name: wait
+#      wait_for: timeout=1
+
+# =========================================================================================================================================================
+# L3 out
+# =========================================================================================================================================================
+
+
+
+    - name: Add L3Out with BGP Enabled via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <l3extOut descr="" dn="uni/tn-{{ item.tenant }}/out-{{ item.name }}" enforceRtctrl="export" name="{{ item.name }}">
+            <l3extRsL3DomAtt tDn="uni/l3dom-{{ item.domain }}"/>
+            <l3extRsEctx tnFvCtxName="{{ item.vrf }}"/>
+            <l3extInstP descr="" floodOnEncap="disabled" matchT="AtleastOne" name="{{ item.ext_epg }}" nameAlias="" prefGrMemb="exclude">
+              <l3extSubnet aggregate="" descr="" ip="{{ item.subnet }}" name="" nameAlias="" scope="{{ item.scope }}"/>
+              <fvRsCons prio="unspecified" tnVzBrCPName="{{ item.contract }}"/>
+              <fvRsProv matchT="AtleastOne" prio="unspecified" tnVzBrCPName="{{ item.contract }}"/>
+            </l3extInstP>
+            <bgpExtP descr="" nameAlias=""/>
+          </l3extOut>
+      with_items: "{{ l3out_bgp }}"
+      when: l3out_bgp is defined
+      tags: l3out_bgp
+
+#    - name: wait
+#      wait_for: timeout=1 
+
+    - name: Add Nodes to L3Out via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <l3extOut descr="" dn="uni/tn-{{ item.tenant }}/out-{{ item.name }}">
+            <l3extLNodeP configIssues="" descr="" name="{{ item.node_name }}">
+              <l3extRsNodeL3OutAtt rtrId="{{ item.rtr_id }}" rtrIdLoopBack="no" tDn="topology/pod-1/node-{{ item.node }}">
+              </l3extRsNodeL3OutAtt>
+            </l3extLNodeP>
+          </l3extOut>
+      with_items: "{{ l3out_nodes }}"
+      when: l3out_nodes is defined
+      tags: l3out_nodes
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add SubInts with BGP to L3Out via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <l3extOut descr="" dn="uni/tn-{{ item.tenant }}/out-{{ item.name }}">
+            <l3extLNodeP name="{{ item.node_name }}">
+              <l3extLIfP name="{{ item.subint }}">
+                <l3extRsPathL3OutAtt addr="{{ item.ip }}" autostate="disabled" encap="vlan-{{ item.vlan }}" encapScope="local" ifInstT="sub-interface" mode="regular" mtu="inherit" tDn="topology/pod-1/paths-{{ item.node }}/pathep-[eth{{ item.int }}]">
+                  <bgpPeerP addr="{{ item.bgp_nei }}" peerCtrl="bfd" ttl="1" weight="0" password="{{ item.bgp_pass }}">
+                    <bgpAsP asn="{{ item.remote_as }}"/>
+                  </bgpPeerP>
+                </l3extRsPathL3OutAtt>
+                <bfdIfP keyId="1">
+                  <bfdRsIfPol tnBfdIfPolName="{{ item.bfd }}"/>
+                </bfdIfP>
+              </l3extLIfP>
+            </l3extLNodeP>
+          </l3extOut>
+      with_items: "{{ l3out_subints_with_bgp }}"
+      when: 
+        - l3out_subints_with_bgp is defined
+        - item.bgp_pass is defined
+        - item.bgp_pass != ""
+      tags: l3out_subints_with_bgp
+
+
+    - name: Add SVI VPC with BGP to L3Out via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <l3extOut descr="" dn="uni/tn-{{ item.tenant }}/out-{{ item.name }}">
+            <l3extLNodeP name="{{ item.node_name }}">
+              <l3extLIfP name="{{ item.svi }}">
+                <l3extRsPathL3OutAtt ifInstT="ext-svi" tDn="topology/pod-1/protpaths-{{ item.nodes }}/pathep-[{{ item.vpc }}]" mtu="inherit" encap="vlan-{{ item.vlan }}" mode="regular" autostate="disabled" encapScope="local">
+                    <l3extMember name="" side="A" addr="{{ item.ipA }}"/>
+                    <l3extMember name="" side="B" addr="{{ item.ipB }}"/>
+                    <bgpPeerP name="" ttl="1" addr="{{ item.bgp_nei }}">
+                        <bgpAsP nameAlias="" name="" asn="{{ item.remote_as }}"/>
+                    </bgpPeerP>
+                </l3extRsPathL3OutAtt>
+                <bfdIfP keyId="1">
+                  <bfdRsIfPol tnBfdIfPolName="{{ item.bfd }}"/>
+                </bfdIfP>
+              </l3extLIfP>
+            </l3extLNodeP>
+          </l3extOut>
+      with_items: "{{ l3out_svi_vpc_with_bgp }}"
+      when: l3out_svi_vpc_with_bgp is defined
+      tags: l3out_svi_vpc_with_bgp
+
+
+# =============================================================================================================================================================
+
+    - name: Add TACACAS Servers via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <aaaTacacsPlusProvider authProtocol="pap" descr="" dn="uni/userext/tacacsext/tacacsplusprovider-{{ item.ip }}" monitorServer="disabled" monitoringUser="" name="{{ item.ip }}" nameAlias="" key="{{ item.key }}" ownerKey="" ownerTag="" port="49" retries="1" timeout="5">
+            <aaaRsSecProvToEpg tDn="uni/tn-mgmt/mgmtp-default/oob-default"/>
+          </aaaTacacsPlusProvider>
+      with_items: "{{ tacacs_servers }}"
+      when: tacacs_servers is defined
+      tags: tacacs_servers
+
+
+    - name: Add TACACAS Server Group via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <aaaTacacsPlusProviderGroup descr="" dn="uni/userext/tacacsext/tacacsplusprovidergroup-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <aaaProviderRef descr="" name="{{ item.server_ip }}" nameAlias="" order="{{ item.order }}" ownerKey="" ownerTag=""/>
+          </aaaTacacsPlusProviderGroup>
+      with_items: "{{ tacacs_server_group }}"
+      when: tacacs_server_group is defined
+      tags: tacacs_server_group
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add TACACAS Domain via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <aaaLoginDomain descr="" dn="uni/userext/logindomain-{{ item.name }}" name="{{ item.name }}" nameAlias="" ownerKey="" ownerTag="">
+            <aaaDomainAuth descr="" name="" nameAlias="" ownerKey="" ownerTag="" providerGroup="{{ item.server_group }}" realm="tacacs"/>
+          </aaaLoginDomain>
+      with_items: "{{ tacacs_domain }}"
+      when: tacacs_domain is defined
+      tags: tacacs_domain
+
+
+# =========================================================================================================================================================
+# Multi-Site Controller
+# APIC GUI: TENANTS > INFRA > POLICIES >PROTOCOLS> FABRIC EXT CONNECTION POLICIES
+# =========================================================================================================================================================
+
+
+#    - name: wait
+#      wait_for: timeout=1
+
+    - name: Add MSITE Ext Connection Policy via REST
+      aci_rest:
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        validate_certs: no
+        path: /api/mo/uni.xml
+        method: post
+        content: |
+          <fvFabricExtConnP descr="" dn="uni/tn-infra/fabricExtConnP-1" id="1" name="" nameAlias="" ownerKey="" ownerTag="" rt="extended:as2-nn4:5:16" siteId="{{ item.site_id }}">
+            <fvPeeringP annotation="" descr="" name="" nameAlias="" ownerKey="" ownerTag="" type="automatic_with_full_mesh"/>
+            <fvPodConnP id="{{ item.pod_id }}">
+              <fvIp addr="{{ item.mpod_tep }}"/>
+            </fvPodConnP>
+          </fvFabricExtConnP>
+      with_items: "{{ ex_conn }}"
+      when: ex_conn is defined
+      tags: ex_conn
+
+
+# ============================================================================================================================================================
+# Take a snaphot of current configuration
+# ============================================================================================================================================================
+
+    - name: wait before POST-SNAPSHOT
+      wait_for: timeout=8
+      tags: always,snapshot
+
+
+    - name: POST-SNAPSHOT
+      aci_rest:
+        validate_certs: no
+        use_proxy: no
+        hostname: "{{ apic_host }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        method: post
+        path: /api/mo/uni.json
+        content: |
+         {"configExportP":{"attributes":{"dn":"uni/fabric/configexp-POST-{{ snapshot_tag }}",
+         "name":"POST-{{ snapshot_tag }}","snapshot":"true","adminSt":"triggered","descr":"{{ tag_change }}"}}}
+      tags: always,snapshot
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

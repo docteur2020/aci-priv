@@ -1,0 +1,45 @@
+---
+# =========================================================================================================================================================
+# ACI SERVER LEAF CONFIGURATION
+# =========================================================================================================================================================
+
+fabric: "GBIS_PAN"
+apic_host: "196.82.129.30"
+leaf : "{{ leaf }}"
+
+pod_id: "1"
+tenant: "TN001"
+tenant_alias: "XXXX"
+
+
+# ============================================================================================================================================================
+# INTERFACES CONFIGURATION
+# ============================================================================================================================================================
+
+{% for intf in list_interfaces %}
+
+eth{{ nodeA }}_1_{{ intf }}:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "TBD_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "TBD_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "TBD_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "TBD_AP", mode: "trunk", vlans: [ "" ] }
+
+eth{{ nodeB }}_1_{{ intf }}:
+  automation: "on"
+  description: ""
+  admin_state: "up"  
+  type: "switch_port"
+  config_type_switch_port: 
+  - { ap: "TBD_AP", mode: "trunk", vlans: [ "" ] }
+  - { ap: "TBD_AP", mode: "native", vlans: [ "" ] }
+  - { ap: "TBD_AP", mode: "access", vlans: [ "" ] }
+  config_type_vpc:
+  - { ap: "TBD_AP", mode: "trunk", vlans: [ "" ] }
+
+{% endfor%}

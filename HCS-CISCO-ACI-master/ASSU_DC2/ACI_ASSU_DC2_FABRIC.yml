@@ -1,0 +1,795 @@
+---
+# =========================================================================================================================================================
+# ACI FABRIC CONFIGURATION
+# =========================================================================================================================================================
+
+fabric: "ASSU_DC2"
+apic_host: "196.18.128.243" #APIC_3
+
+
+# =========================================================================================================================================================
+# Switch Provisioning 
+# =========================================================================================================================================================
+
+switchs:
+#LEAF 10X
+  - { serial: "FDO22100SX9", nodeId: "101", name: "ASU-BRD-DC2-2B1-0101", podId: "1" }
+  - { serial: "FDO22120TA5", nodeId: "102", name: "ASU-SRV-DC2-2B1-0102", podId: "1" }
+  - { serial: "FDO22112AT6", nodeId: "103", name: "ASU-LEF-DC2-2B1-0103", podId: "1" }
+  - { serial: "FDO221207AS", nodeId: "104", name: "ASU-LEF-DC2-2B1-0104", podId: "1" }
+  - { serial: "FDO21432APG", nodeId: "105", name: "ASU-LEF-DC2-2B1-0105", podId: "1" }
+  - { serial: "FDO21480NTL", nodeId: "106", name: "ASU-LEF-DC2-2B1-0106", podId: "1" }
+  - { serial: "FDO21441X2S", nodeId: "107", name: "ASU-LEF-DC2-2B1-0107", podId: "1" }
+  - { serial: "FDO21441X31", nodeId: "108", name: "ASU-LEF-DC2-2B1-0108", podId: "1" }
+  - { serial: "FDO21470L2B", nodeId: "109", name: "ASU-LEF-DC2-2B1-0109", podId: "1" }
+  - { serial: "FDO221206M7", nodeId: "112", name: "ASU-LEF-DC2-2B1-0112", podId: "1" }
+
+#LEAF 20X
+  - { serial: "FDO221109VU", nodeId: "201", name: "ASU-BRD-DC2-2B1-0201", podId: "1" }
+  - { serial: "FDO22120TED", nodeId: "202", name: "ASU-SRV-DC2-2B1-0202", podId: "1" }
+  - { serial: "FDO22120TFQ", nodeId: "203", name: "ASU-LEF-DC2-2B1-0203", podId: "1" }
+  - { serial: "FDO22120TD7", nodeId: "204", name: "ASU-LEF-DC2-2B1-0204", podId: "1" }
+  - { serial: "FDO21480NTM", nodeId: "205", name: "ASU-LEF-DC2-2B1-0205", podId: "1" }
+  - { serial: "FDO21480NTT", nodeId: "206", name: "ASU-LEF-DC2-2B1-0206", podId: "1" }
+  - { serial: "FDO21422NBS", nodeId: "207", name: "ASU-LEF-DC2-2B1-0207", podId: "1" }
+  - { serial: "FDO21441X5P", nodeId: "208", name: "ASU-LEF-DC2-2B1-0208", podId: "1" }
+  - { serial: "FDO21480NU6", nodeId: "209", name: "ASU-LEF-DC2-2B1-0209", podId: "1" }
+  - { serial: "FDO221206P9", nodeId: "212", name: "ASU-LEF-DC2-2B1-0212", podId: "1" }
+
+#SPINE 100X
+  - { serial: "FDO22212AEE", nodeId: "1001", name: "ASU-SPN-DC2-2B1-1001", podId: "1" }
+  - { serial: "FDO22212AEG", nodeId: "1002", name: "ASU-SPN-DC2-2B1-1002", podId: "1" }
+  - { serial: "FDO22212AG6", nodeId: "1003", name: "ASU-SPN-DC2-2B1-1003", podId: "1" }
+
+
+
+
+# =========================================================================================================================================================
+# Switch Row/Rack Details 
+# =========================================================================================================================================================
+site: "FR" 
+building: "DC2" 
+floor: "Ground" 
+room: "2B1"  
+
+racks: 
+  - { nodeId: "101", rack: "D14", row: "D" } 
+  - { nodeId: "102", rack: "D15", row: "D" }
+  - { nodeId: "103", rack: "G07", row: "G" } 
+  - { nodeId: "104", rack: "G08", row: "G" }
+  - { nodeId: "105", rack: "G10", row: "G" } 
+  - { nodeId: "106", rack: "G11", row: "G" }
+  - { nodeId: "107", rack: "G12", row: "G" } 
+  - { nodeId: "108", rack: "D01", row: "D" }
+  - { nodeId: "109", rack: "G04", row: "G" } 
+  - { nodeId: "112", rack: "D01", row: "D" }
+#
+  - { nodeId: "201", rack: "H02", row: "H" } 
+  - { nodeId: "202", rack: "H02", row: "H" }
+  - { nodeId: "203", rack: "G07", row: "G" } 
+  - { nodeId: "204", rack: "G08", row: "G" }
+  - { nodeId: "205", rack: "G10", row: "G" } 
+  - { nodeId: "206", rack: "G11", row: "G" }
+  - { nodeId: "207", rack: "G12", row: "G" } 
+  - { nodeId: "208", rack: "H07", row: "H" }
+  - { nodeId: "209", rack: "G05", row: "G" }  
+  - { nodeId: "212", rack: "H07", row: "H" }
+#
+  - { nodeId: "1001", rack: "D14", row: "D" } 
+  - { nodeId: "1002", rack: "D15", row: "D" }
+  - { nodeId: "1003", rack: "H02", row: "H" }
+
+
+
+# =========================================================================================================================================================
+# Maintenance Groups
+# =========================================================================================================================================================
+
+mtce_group:
+  Leaf_10x:   { name: "NODES_1XX",  nodeId: [ "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112" ] }
+  Leaf_20x:   { name: "NODES_2XX",  nodeId: [ "201", "202", "203", "204", "205", "206", "207", "208", "209", "210", "211", "212" ] }
+  Spine_1001: { name: "SPINE_1001", nodeId: [ "1001" ] }
+  Spine_1002: { name: "SPINE_1002", nodeId: [ "1002" ] }
+  Spine_1003: { name: "SPINE_1003", nodeId: [ "1003" ] }
+
+
+# =========================================================================================================================================================
+# Firmware Groups
+# =========================================================================================================================================================
+
+firmware_group:
+  Leaf_10x:   { name: "NODES_1XX",  version: "n9000-13.2(1m)",  nodeId: [ "101", "102", "103", "104", "105", "106", "107", "108", "109", "112" ] }
+  Leaf_20x:   { name: "NODES_2XX",  version: "n9000-13.2(1m)",  nodeId: [ "201", "202", "203", "204", "205", "206", "207", "208", "209", "212" ] }
+  Spine_1001: { name: "SPINE_1001", version: "n9000-13.2(1m)",  nodeId: [ "1001" ] }
+  Spine_1002: { name: "SPINE_1002", version: "n9000-13.2(1m)",  nodeId: [ "1002" ] }
+  Spine_1003: { name: "SPINE_1003", version: "n9000-13.2(1m)",  nodeId: [ "1003" ] }
+
+
+
+# ============================================================================================================================================================
+
+link_levels:
+  - { name: "AUTO_ON", speed: "inherit", auto_neg: "on" }
+  - { name: "100G_AUTO_OFF", speed: "100G", auto_neg: "off" }
+  - { name: "40G_AUTO_OFF", speed: "40G", auto_neg: "off" }
+  - { name: "10G_AUTO_OFF", speed: "10G", auto_neg: "off" }
+  - { name: "1G_AUTO_OFF", speed: "1G", auto_neg: "off" }
+
+cdps:
+  - { name: "CDP_ON", AdminState: "enabled" }
+  - { name: "CDP_OFF", AdminState: "disabled" }
+
+lldps:
+  - { name: "LLDP_ON", RxState: "enabled", TxState: "enabled" }
+  - { name: "LLDP_OFF", RxState: "disabled", TxState: "disabled" }
+
+port_channels:
+  - { name: "LACP_ACTIVE", mode: "active", ctrl: "fast-sel-hot-stdby,graceful-conv,susp-individual" }
+  - { name: "LACP_ACTIVE_SUSPEND_OFF", mode: "active", ctrl: "fast-sel-hot-stdby,graceful-conv" }
+  - { name: "LACP_PASSIVE", mode: "passive", ctrl: "fast-sel-hot-stdby,graceful-conv,susp-individual" }
+  - { name: "LACP_OFF", mode: "off", ctrl: "fast-sel-hot-stdby,graceful-conv,susp-individual" }
+
+mcp:
+  - {name: "MCP_ON", mode: "enabled" }
+  - {name: "MCP_OFF", mode: "disabled" }
+
+storm_control_policy:
+  - { name: "Storm-Control-rate10-burst15", rate: 10, burst: 15 }
+
+spanning_tree_policy:
+  - { name: "stp_bpdu_filter", ctrl: "bpdu-filter"}
+  - { name: "stp_bpdu_guard", ctrl: "bpdu-guard"}  
+  - { name: "stp_bpdu_guard_and_filter", ctrl: "bpdu-filter,bpdu-guard"}
+
+# ============================================================================================================================================================
+    
+tenants:
+  - { name: "TN001", alias: "ASSU" }
+
+# ============================================================================================================================================================
+
+vrfs:
+  - { name: "ASSU_VRF", tenant: "TN001", bgp_timers: "ASSU_BGP_TIMERS" }
+
+
+# ============================================================================================================================================================
+
+# BGP AS for Fabric internal BGP
+bgp_as: "64919"
+
+# BGP Router Reflectors (3 per POD)
+bgp_rrs:
+  - { NodeID: "1001", PodID: "1"}
+  - { NodeID: "1002", PodID: "1"}
+  - { NodeID: "1003", PodID: "1"}
+
+# ============================================================================================================================================================
+ 
+podpol:
+  - { name: "POD_POL_GRP", ntp: "HCS_NTP", snmp: "SNMP_ASSU" }
+
+# ============================================================================================================================================================
+
+# VLAN Pools
+vlan_pools:
+  - { name: "VLANP_ALL", allocation: "static"}
+
+vlan_blocks:
+  - { vlan_pool: "VLANP_ALL", vlan_from: "vlan-1", vlan_to: "vlan-3966", allocation: "static" }
+
+phys_doms:
+  - { name: "PDOM_TN001", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "PDOM_COMMON", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+
+ext_routed_doms:
+  - { name: "L3DOM_TN001", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+  - { name: "L3DOM_COMMON", vlan_pool: "VLANP_ALL", vlan_pool_type: "static" }
+
+# ============================================================================================================================================================
+
+aeps:
+  - { name: "AEP_TN001_COMPUTE", domain_type: "phys", domain_name: "PDOM_TN001" }
+  - { name: "AEP_TN001_L2NET", domain_type: "phys", domain_name: "PDOM_TN001" }
+  - { name: "AEP_TN001_L3NET", domain_type: "phys", domain_name: "L3DOM_TN001" }
+  - { name: "AEP_COMMON_COMPUTE", domain_type: "phys", domain_name: "PDOM_COMMON" }
+  - { name: "AEP_COMMON_L2NET", domain_type: "phys", domain_name: "PDOM_COMMON" }
+  - { name: "AEP_COMMON_L3NET", domain_type: "phys", domain_name: "L3DOM_COMMON" }
+
+# ============================================================================================================================================================
+
+bgp_timers:
+  - { name: "ASSU_BGP_TIMERS", tenant: "TN001", keep_alive: 60, hold_int: 180, }
+
+# ============================================================================================================================================================
+
+#isis_metric: 32
+
+# ============================================================================================================================================================
+
+contracts:
+  - { name: "PermitAny_ASSU_VRF", tenant: "TN001" }
+
+# ============================================================================================================================================================
+
+# Access Interface Policy Groups
+
+access_ipgs:
+  - { name: "INTPOL_TN001_COMPUTE", aaep: "AEP_TN001_COMPUTE", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_L2NET", aaep: "AEP_TN001_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_TN001_L3NET", aaep: "AEP_TN001_L3NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_L2NET", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_L3NET", aaep: "AEP_COMMON_L3NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+
+vpc_ipgs:
+  - { name: "INTPOL_COMMON_OTV1_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "40G_AUTO_OFF", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_OTV2_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_LB1_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }
+  - { name: "INTPOL_COMMON_N7K1_LB1_VPC", aaep: "AEP_COMMON_L2NET", lldp_pol: "LLDP_ON", cdp_pol: "CDP_ON", llacp_pol: "LACP_ACTIVE", link_level_pol: "AUTO_ON", mcp: "MCP_ON" }     
+
+spine_ipgs:
+  - { name: "INTPOL_COMMON_ISN", aaep: "AEP_COMMON_L3NET", cdp_pol: "CDP_ON", link_level_pol: "AUTO_ON" }
+
+
+
+# =========================================================================================================================================================
+# Interface Profiles
+# =========================================================================================================================================================
+
+intpros:
+  - { name: "INTPRO_BRD_101" }
+  - { name: "INTPRO_BRD_201" }
+  - { name: "INTPRO_BRD_101_201" }
+  - { name: "INTPRO_SRV_102" }
+  - { name: "INTPRO_SRV_202" }
+  - { name: "INTPRO_SRV_102_202" }
+  - { name: "INTPRO_LEF_103" }
+  - { name: "INTPRO_LEF_203" }
+  - { name: "INTPRO_LEF_103_203" }
+  - { name: "INTPRO_LEF_104" }
+  - { name: "INTPRO_LEF_204" }
+  - { name: "INTPRO_LEF_104_204" }
+  - { name: "INTPRO_LEF_105" }
+  - { name: "INTPRO_LEF_205" }
+  - { name: "INTPRO_LEF_105_205" }
+  - { name: "INTPRO_LEF_106" }
+  - { name: "INTPRO_LEF_206" }
+  - { name: "INTPRO_LEF_106_206" }
+  - { name: "INTPRO_LEF_107" }
+  - { name: "INTPRO_LEF_207" }
+  - { name: "INTPRO_LEF_107_207" }
+  - { name: "INTPRO_LEF_108" }
+  - { name: "INTPRO_LEF_208" }
+  - { name: "INTPRO_LEF_108_208" }
+  - { name: "INTPRO_LEF_109" }
+  - { name: "INTPRO_LEF_209" }
+  - { name: "INTPRO_LEF_109_209" }
+  #- { name: "INTPRO_LEF_110" }
+  #- { name: "INTPRO_LEF_210" }
+  #- { name: "INTPRO_LEF_110_210" }
+  #- { name: "INTPRO_LEF_111" }
+  #- { name: "INTPRO_LEF_211" }
+  #- { name: "INTPRO_LEF_111_211" }
+  - { name: "INTPRO_LEF_112" }  
+  - { name: "INTPRO_LEF_212" }
+  - { name: "INTPRO_LEF_112_212" }
+
+
+# ============================================================================================================================================================
+
+spine_intpros:
+  - { name: "INTPRO_SPN_1001" }
+  - { name: "INTPRO_SPN_1002" }
+  - { name: "INTPRO_SPN_1003" }
+  - { name: "INTPRO_SPN_1001_1002_1003" }
+
+
+
+# =========================================================================================================================================================
+# single switch Profiles
+# =========================================================================================================================================================
+
+single_swpros:
+  - { name: "SWPRO_BRD_101", switch: "BRD_101", node_name: "101", node_from: 101, node_to: 101, intpro: "INTPRO_BRD_101" } # miss rack name
+  - { name: "SWPRO_BRD_201", switch: "BRD_201", node_name: "201", node_from: 201, node_to: 201, intpro: "INTPRO_BRD_201" }
+  - { name: "SWPRO_SRV_102", switch: "SRV_102", node_name: "102", node_from: 102, node_to: 102, intpro: "INTPRO_SRV_102" }
+  - { name: "SWPRO_SRV_202", switch: "SRV_202", node_name: "202", node_from: 202, node_to: 202, intpro: "INTPRO_SRV_202" }
+  - { name: "SWPRO_LEF_103", switch: "LEF_103", node_name: "103", node_from: 103, node_to: 103, intpro: "INTPRO_LEF_103" }
+  - { name: "SWPRO_LEF_203", switch: "LEF_203", node_name: "203", node_from: 203, node_to: 203, intpro: "INTPRO_LEF_203" }
+  - { name: "SWPRO_LEF_104", switch: "LEF_104", node_name: "104", node_from: 104, node_to: 104, intpro: "INTPRO_LEF_104" }
+  - { name: "SWPRO_LEF_204", switch: "LEF_204", node_name: "204", node_from: 204, node_to: 204, intpro: "INTPRO_LEF_204" }
+  - { name: "SWPRO_LEF_105", switch: "LEF_105", node_name: "105", node_from: 105, node_to: 105, intpro: "INTPRO_LEF_105" }
+  - { name: "SWPRO_LEF_205", switch: "LEF_205", node_name: "205", node_from: 205, node_to: 205, intpro: "INTPRO_LEF_205" }
+  - { name: "SWPRO_LEF_106", switch: "LEF_106", node_name: "106", node_from: 106, node_to: 106, intpro: "INTPRO_LEF_106" }
+  - { name: "SWPRO_LEF_206", switch: "LEF_206", node_name: "206", node_from: 206, node_to: 206, intpro: "INTPRO_LEF_206" }
+  - { name: "SWPRO_LEF_107", switch: "LEF_107", node_name: "107", node_from: 107, node_to: 107, intpro: "INTPRO_LEF_107" }
+  - { name: "SWPRO_LEF_207", switch: "LEF_207", node_name: "207", node_from: 207, node_to: 207, intpro: "INTPRO_LEF_207" }
+  - { name: "SWPRO_LEF_108", switch: "LEF_108", node_name: "108", node_from: 108, node_to: 108, intpro: "INTPRO_LEF_108" }
+  - { name: "SWPRO_LEF_208", switch: "LEF_208", node_name: "208", node_from: 208, node_to: 208, intpro: "INTPRO_LEF_208" }
+  - { name: "SWPRO_LEF_109", switch: "LEF_109", node_name: "109", node_from: 109, node_to: 109, intpro: "INTPRO_LEF_109" }
+  - { name: "SWPRO_LEF_209", switch: "LEF_209", node_name: "209", node_from: 209, node_to: 209, intpro: "INTPRO_LEF_209" }
+  - { name: "SWPRO_LEF_112", switch: "LEF_112", node_name: "112", node_from: 112, node_to: 112, intpro: "INTPRO_LEF_112" }
+  - { name: "SWPRO_LEF_212", switch: "LEF_212", node_name: "212", node_from: 212, node_to: 212, intpro: "INTPRO_LEF_212" }
+
+
+
+# =========================================================================================================================================================
+# Pair switch Profiles
+# =========================================================================================================================================================
+
+pair_swpros:
+  - { name: "SWPRO_BRD_101_201", switch: "BRD_101_201", node_name: "101_201", node_from: 101, node_to: 201, intpro: "INTPRO_BRD_101_201" }
+  - { name: "SWPRO_SRV_102_202", switch: "SRV_102_202", node_name: "102_202", node_from: 102, node_to: 202, intpro: "INTPRO_SRV_102_202" }
+  - { name: "SWPRO_LEF_103_203", switch: "LEF_103_203", node_name: "103_203", node_from: 103, node_to: 203, intpro: "INTPRO_LEF_103_203" }
+  - { name: "SWPRO_LEF_104_204", switch: "LEF_104_204", node_name: "104_204", node_from: 104, node_to: 204, intpro: "INTPRO_LEF_104_204" }
+  - { name: "SWPRO_LEF_105_205", switch: "LEF_105_205", node_name: "105_205", node_from: 105, node_to: 205, intpro: "INTPRO_LEF_105_205" }
+  - { name: "SWPRO_LEF_106_206", switch: "LEF_106_206", node_name: "106_206", node_from: 106, node_to: 206, intpro: "INTPRO_LEF_106_206" }
+  - { name: "SWPRO_LEF_107_207", switch: "LEF_107_207", node_name: "107_207", node_from: 107, node_to: 207, intpro: "INTPRO_LEF_107_207" }
+  - { name: "SWPRO_LEF_108_208", switch: "LEF_108_208", node_name: "108_208", node_from: 108, node_to: 208, intpro: "INTPRO_LEF_108_208" }
+  - { name: "SWPRO_LEF_109_209", switch: "LEF_109_209", node_name: "109_209", node_from: 109, node_to: 209, intpro: "INTPRO_LEF_109_209" }
+  - { name: "SWPRO_LEF_112_212", switch: "LEF_112_212", node_name: "112_212", node_from: 112, node_to: 212, intpro: "INTPRO_LEF_112_212" }
+
+
+
+# =========================================================================================================================================================
+# Spine switch Profiles
+# =========================================================================================================================================================
+
+spine_swpros:
+  - { name: "SWPRO_SPN_1001", switch: "SPN_1001", node_name: "1001", infra_name: "7024a165dddcce63", node_from: 1001, node_to: 1001, intpro: "INTPRO_SPN_1001" }
+  - { name: "SWPRO_SPN_1002", switch: "SPN_1002", node_name: "1002", infra_name: "7024a165dddcce63", node_from: 1002, node_to: 1002, intpro: "INTPRO_SPN_1002" }
+  - { name: "SWPRO_SPN_1003", switch: "SPN_1003", node_name: "1003", infra_name: "7024a165dddcce63", node_from: 1003, node_to: 1003, intpro: "INTPRO_SPN_1003" }
+  - { name: "SWPRO_SPN_1001_1002_1003", switch: "SPN_1001_1002_1003", node_name: "1001_1002_1003", infra_name: "7f52863628771e60", node_from: 1001, node_to: 1003, intpro: "INTPRO_SPN_1001_1002_1003" }
+
+
+
+# =========================================================================================================================================================
+# VPC Domain
+# =========================================================================================================================================================
+
+vpc_doms:
+  - { name: "VPC_DOM_001_101_201", domainID: 01, podID: 1, switch1: 101, switch2: 201 }
+  - { name: "VPC_DOM_002_102_202", domainID: 02, podID: 1, switch1: 102, switch2: 202 }
+  - { name: "VPC_DOM_003_103_203", domainID: 03, podID: 1, switch1: 103, switch2: 203 }
+  - { name: "VPC_DOM_004_104_204", domainID: 04, podID: 1, switch1: 104, switch2: 204 }
+  - { name: "VPC_DOM_005_105_205", domainID: 05, podID: 1, switch1: 105, switch2: 205 }
+  - { name: "VPC_DOM_006_106_206", domainID: 06, podID: 1, switch1: 106, switch2: 206 }
+  - { name: "VPC_DOM_007_107_207", domainID: 07, podID: 1, switch1: 107, switch2: 207 }
+  - { name: "VPC_DOM_008_108_208", domainID: 08, podID: 1, switch1: 108, switch2: 208 }
+  - { name: "VPC_DOM_009_109_209", domainID: 09, podID: 1, switch1: 109, switch2: 209 }
+  #- { name: "VPC_DOM_010_110_210", domainID: 100, podID: 1, switch1: 110, switch2: 210 }
+  #- { name: "VPC_DOM_011_111_211", domainID: 110, podID: 1, switch1: 111, switch2: 211 }
+  - { name: "VPC_DOM_012_112_212", domainID: 12, podID: 1, switch1: 112, switch2: 212 }
+
+# ============================================================================================================================================================
+
+int_sel:
+  - { name: "INT_1_1", from_port: 1, to_port: 1, ipg: "INTPOL_COMMON_L3NET", intpro: "INTPRO_BRD_101" }
+  - { name: "INT_1_1", from_port: 1, to_port: 1, ipg: "INTPOL_COMMON_L3NET", intpro: "INTPRO_BRD_201" }
+  - { name: "INT_1_1", from_port: 1, to_port: 1, ipg: "INTPOL_COMMON_L3NET", intpro: "INTPRO_SRV_102" }
+  - { name: "INT_1_1", from_port: 1, to_port: 1, ipg: "INTPOL_COMMON_L3NET", intpro: "INTPRO_SRV_202" }
+  - { name: "INT_1_3", from_port: 3, to_port: 3, ipg: "INTPOL_COMMON_OTV1_VPC", intpro: "INTPRO_BRD_101_201" }
+  - { name: "INT_1_5", from_port: 5, to_port: 5, ipg: "INTPOL_COMMON_OTV2_VPC", intpro: "INTPRO_BRD_101_201" }
+  #- { name: "INT_1_2", from_port: 2, to_port: 2, ipg: "INTPOL_COMMON_N7K1_LB1_VPC", intpro: "INTPRO_SRV_102_202" }
+  #- { name: "INT_1_3", from_port: 3, to_port: 3, ipg: "INTPOL_COMMON_LB1_VPC", intpro: "INTPRO_SRV_102_202" }
+
+
+      
+# ============================================================================================================================================================
+
+spine_int_sel:
+  - { name: "INT_1_63_to_64", card: 1, from_port: 63, to_port: 64, ipg: "INTPOL_COMMON_ISN", intpro: "INTPRO_SPN_1001_1002_1003" }
+
+# ============================================================================================================================================================
+
+
+oobips:
+  - { NodeID: 101, PodID: 1, IpAddress: "196.18.128.101/24", Gateway: "196.18.128.254" }
+  - { NodeID: 102, PodID: 1, IpAddress: "196.18.128.102/24", Gateway: "196.18.128.254" }
+  - { NodeID: 103, PodID: 1, IpAddress: "196.18.128.103/24", Gateway: "196.18.128.254" }
+  - { NodeID: 104, PodID: 1, IpAddress: "196.18.128.104/24", Gateway: "196.18.128.254" }
+  - { NodeID: 105, PodID: 1, IpAddress: "196.18.128.105/24", Gateway: "196.18.128.254" }
+  - { NodeID: 106, PodID: 1, IpAddress: "196.18.128.106/24", Gateway: "196.18.128.254" }
+  - { NodeID: 107, PodID: 1, IpAddress: "196.18.128.107/24", Gateway: "196.18.128.254" }
+  - { NodeID: 108, PodID: 1, IpAddress: "196.18.128.108/24", Gateway: "196.18.128.254" }
+  - { NodeID: 109, PodID: 1, IpAddress: "196.18.128.109/24", Gateway: "196.18.128.254" }
+  #- { NodeID: 110, PodID: 1, IpAddress: "196.18.128.110/24", Gateway: "196.18.128.254" }
+  #- { NodeID: 111, PodID: 1, IpAddress: "196.18.128.111/24", Gateway: "196.18.128.254" }
+  - { NodeID: 112, PodID: 1, IpAddress: "196.18.128.112/24", Gateway: "196.18.128.254" }
+#  
+  - { NodeID: 201, PodID: 1, IpAddress: "196.18.128.201/24", Gateway: "196.18.128.254" }
+  - { NodeID: 202, PodID: 1, IpAddress: "196.18.128.202/24", Gateway: "196.18.128.254" }
+  - { NodeID: 203, PodID: 1, IpAddress: "196.18.128.203/24", Gateway: "196.18.128.254" }
+  - { NodeID: 204, PodID: 1, IpAddress: "196.18.128.204/24", Gateway: "196.18.128.254" }
+  - { NodeID: 205, PodID: 1, IpAddress: "196.18.128.205/24", Gateway: "196.18.128.254" }
+  - { NodeID: 206, PodID: 1, IpAddress: "196.18.128.206/24", Gateway: "196.18.128.254" }
+  - { NodeID: 207, PodID: 1, IpAddress: "196.18.128.207/24", Gateway: "196.18.128.254" }
+  - { NodeID: 208, PodID: 1, IpAddress: "196.18.128.208/24", Gateway: "196.18.128.254" }
+  - { NodeID: 209, PodID: 1, IpAddress: "196.18.128.209/24", Gateway: "196.18.128.254" }
+  #- { NodeID: 210, PodID: 1, IpAddress: "196.18.128.210/24", Gateway: "196.18.128.254" }
+  #- { NodeID: 211, PodID: 1, IpAddress: "196.18.128.211/24", Gateway: "196.18.128.254" }
+  - { NodeID: 212, PodID: 1, IpAddress: "196.18.128.212/24", Gateway: "196.18.128.254" }  
+#
+  - { NodeID: 1001, PodID: 1, IpAddress: "196.18.128.231/24", Gateway: "196.18.128.254" }
+  - { NodeID: 1002, PodID: 1, IpAddress: "196.18.128.232/24", Gateway: "196.18.128.254" }
+  - { NodeID: 1003, PodID: 1, IpAddress: "196.18.128.233/24", Gateway: "196.18.128.254" }
+
+
+
+# =========================================================================================================================================================
+# EPG
+# =========================================================================================================================================================
+
+
+#tenant: TN001
+#ap: ASSU_AP
+#vrf: ASSU_VRF
+
+
+epgs:
+  - { vlan_id: 13, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 130, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 140, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 180, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 181, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 182, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 183, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 184, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 185, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 186, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 187, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 188, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 189, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 190, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 191, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 192, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 193, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 194, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 195, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 196, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 197, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 198, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 199, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 20, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 200, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 201, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 202, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 203, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 204, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 205, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 206, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 207, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 208, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 209, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 210, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 211, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 212, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 213, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 214, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 215, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 216, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 217, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 218, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 219, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 220, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 221, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 222, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 223, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 224, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 225, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 226, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 227, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 228, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 229, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 230, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 231, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 232, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 233, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 234, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 235, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 236, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 237, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 238, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 239, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 240, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 241, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 242, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 243, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 244, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 245, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 246, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 247, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 248, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 249, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 250, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 251, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 252, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 255, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 256, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 257, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 258, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 259, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 260, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 261, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 262, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 263, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 264, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 265, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 266, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 267, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 268, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 269, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 270, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 271, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 272, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 273, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 274, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 275, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 276, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 277, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 278, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 279, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 280, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 281, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 282, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 283, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 284, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 285, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 286, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 287, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 288, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 289, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 290, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 291, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 292, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 293, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 294, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 295, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 296, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 297, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 298, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 299, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 30, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 300, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 31, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 328, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 332, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 333, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 335, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 336, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 337, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 338, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 341, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 343, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 344, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 345, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 347, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 348, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 351, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 352, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 353, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 354, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 357, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 360, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 361, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 362, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 365, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 366, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 367, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 370, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 374, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 375, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 376, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 377, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 381, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 383, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 390, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 40, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 41, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 42, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 54, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 60, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 61, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 62, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 63, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 64, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 8, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 80, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 81, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 82, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 83, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 89, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 9, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 900, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 901, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 908, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 910, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 920, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 921, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 922, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 923, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 97, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 99, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 998, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+  - { vlan_id: 1400, tenant: "TN001", vrf: "ASSU_VRF", ap: "ASSU_AP", intersite: "yes", vmac: "not-applicable" }
+
+
+# =========================================================================================================================================================
+# Subnets
+# =========================================================================================================================================================
+
+subnet:
+  - { vlan_id: 60, ip: "192.116.1.251/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 61, ip: "192.116.2.251/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 62, ip: "192.116.3.251/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 63, ip: "192.116.4.251/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 64, ip: "192.116.5.251/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 180, ip: "192.116.8.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 181, ip: "192.116.9.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 182, ip: "192.116.10.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 183, ip: "192.116.11.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 190, ip: "192.116.27.5/25", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 195, ip: "192.116.27.133/25", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 210, ip: "192.116.34.7/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 220, ip: "192.116.17.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 221, ip: "192.116.12.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 222, ip: "192.116.14.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 223, ip: "192.116.33.183/28", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 224, ip: "192.116.18.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 225, ip: "192.116.13.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 226, ip: "192.116.15.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 229, ip: "192.116.33.229/27", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 230, ip: "192.116.19.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 235, ip: "192.116.20.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 239, ip: "192.116.33.5/25", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 240, ip: "192.116.22.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 245, ip: "192.116.23.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 250, ip: "192.116.26.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 251, ip: "192.116.16.51/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 252, ip: "192.116.24.5/26", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 255, ip: "192.116.33.197/27", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 328, ip: "192.116.128.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 335, ip: "192.116.135.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 336, ip: "192.116.136.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 337, ip: "192.116.137.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 338, ip: "192.116.138.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 343, ip: "192.116.143.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 344, ip: "192.116.144.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 345, ip: "192.116.145.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 347, ip: "192.116.147.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 348, ip: "192.116.148.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 351, ip: "192.116.151.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 352, ip: "192.116.152.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 353, ip: "192.116.153.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 354, ip: "192.116.154.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 357, ip: "192.116.157.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 360, ip: "192.116.160.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 361, ip: "192.116.161.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 362, ip: "192.116.162.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 365, ip: "192.116.165.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 367, ip: "192.116.167.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 370, ip: "192.116.170.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 375, ip: "192.116.175.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 376, ip: "192.116.176.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 377, ip: "192.116.177.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 383, ip: "192.116.183.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+  - { vlan_id: 390, ip: "192.116.190.5/24", tenant: "TN001", pref: "yes", scope: "private" }
+
+
+
+# ============================================================================================================================================================
+
+bfd:
+  - { name: "ASSU_BFD_Pol", mode: "enabled", tenant: "TN001" }
+  - { name: "ASSU_BFD_Pol_NO_ECHO", mode: "disabled", tenant: "TN001" }
+
+
+l3out_bgp:
+ - { name: "L3OUT_VRF_ASSU_MAN", tenant: "TN001", vrf: "ASSU_VRF", ext_epg: "Routes_ASSU_to_MAN", domain: "L3DOM_TN001", contract: "PermitAny_ASSU_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+ - { name: "L3OUT_VRF_ASSU_FALLBACK_MAN", tenant: "TN001", vrf: "ASSU_VRF", ext_epg: "Routes_ASSU_FALLBACK_to_MAN", domain: "L3DOM_TN001", contract: "PermitAny_ASSU_VRF", subnet: "0.0.0.0/0", scope: "export-rtctrl,import-security" }
+ - { name: "L3OUT_LEGACY_ORLEANS", tenant: "TN001", vrf: "ASSU_VRF", ext_epg: "Routes_LEGACY_ORLEANS", domain: "L3DOM_COMMON", contract: "PermitAny_ASSU_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+
+#   - { name: "L3OUT_VRF_ASSU_N7K1", tenant: "TN001", vrf: "ASSU_VRF", ext_epg: "Route_to_N7K1", domain: "L3DOM_TN001", contract: "PermitAny_ASSU_VRF", subnet: "0.0.0.0/0", scope: "import-security" }
+
+l3out_nodes:
+ - { name: "L3OUT_VRF_ASSU_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, rtr_id: 195.2.0.1 }
+ - { name: "L3OUT_VRF_ASSU_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 195.2.0.2 }
+ - { name: "L3OUT_VRF_ASSU_FALLBACK_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, rtr_id: 195.2.0.1 }
+ - { name: "L3OUT_VRF_ASSU_FALLBACK_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 195.2.0.2 }
+ - { name: "L3OUT_LEGACY_ORLEANS", tenant: "TN001", node_name: "BRD_101_201", node: 101, rtr_id: 195.2.0.1 }
+ - { name: "L3OUT_LEGACY_ORLEANS", tenant: "TN001", node_name: "BRD_101_201", node: 201, rtr_id: 195.2.0.2 }
+
+#   - { name: "L3OUT_VRF_ASSU_N7K1", tenant: "TN001", node_name: "SRV_102_202", node: 102, rtr_id: 195.2.65.3 }
+#   - { name: "L3OUT_VRF_ASSU_N7K1", tenant: "TN001", node_name: "SRV_102_202", node: 202, rtr_id: 195.2.65.4 }
+
+l3out_subints_with_bgp:
+ - { name: "L3OUT_VRF_ASSU_MAN", subint: "SUB_INT_101_ASSU_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, ip: "195.2.0.26/30", int: "1/1", vlan: 2802, bgp_nei: 195.2.0.25, remote_as: "64911", bfd: "ASSU_BFD_Pol" }
+ - { name: "L3OUT_VRF_ASSU_MAN", subint: "SUB_INT_201_ASSU_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, ip: "195.2.0.30/30", int: "1/1", vlan: 2802, bgp_nei: 195.2.0.29, remote_as: "64911", bfd: "ASSU_BFD_Pol"   }
+ - { name: "L3OUT_VRF_ASSU_FALLBACK_MAN", subint: "SUB_INT_101_ASSU_FALLBACK_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 101, ip: "195.2.0.50/30", int: "1/1", vlan: 2702, bgp_nei: 195.2.0.49, remote_as: "64911", bfd: "ASSU_BFD_Pol" }
+ - { name: "L3OUT_VRF_ASSU_FALLBACK_MAN", subint: "SUB_INT_201_ASSU_FALLBACK_VRF_MAN", tenant: "TN001", node_name: "BRD_101_201", node: 201, ip: "195.2.0.54/30", int: "1/1", vlan: 2702, bgp_nei: 195.2.0.53, remote_as: "64911", bfd: "ASSU_BFD_Pol"   }
+#   - { name: "L3OUT_VRF_ASSU_N7K1", subint: "SUB_INT_102_ASSU_VRF_N7K1", tenant: "TN001", node_name: "SRV_102_202", node: 102, ip: "195.2.1.34/30", int: "1/1", vlan: 3, bgp_nei: 195.2.1.33, remote_as: "99999", bfd: "ASSU_BFD_Pol"  }
+#   - { name: "L3OUT_VRF_ASSU_N7K1", subint: "SUB_INT_202_ASSU_VRF_N7K1", tenant: "TN001", node_name: "SRV_102_202", node: 202, ip: "195.2.1.38/30", int: "1/1", vlan: 4, bgp_nei: 195.2.1.37, remote_as: "99999", bfd: "ASSU_BFD_Pol"  }  
+
+l3out_svi_vpc_with_bgp:
+ - { name: "L3OUT_LEGACY_ORLEANS", svi: "SVI_101_201_LEGACY_ORLEANS", vpc: "INTPOL_COMMON_OTV1_VPC", tenant: "TN001", node_name: "BRD_101_201", nodes: "101-201", ipA: "195.2.0.41/29", ipB: "195.2.0.42/29", vlan: 253, bgp_nei: 195.2.0.46, remote_as: "64688", bfd: "ASSU_BFD_Pol_NO_ECHO" }
+
+
+
+# =========================================================================================================================================================
+# MTU
+# =========================================================================================================================================================
+
+ctrl_mtu: 8350
+fabric_mtu: 8400
+
+
+# =========================================================================================================================================================
+# NTP
+# =========================================================================================================================================================
+
+ntp_timezone: "p120_Europe-Paris"
+
+ntp_servers:
+  - { name: "HCS_NTP", server: 192.64.10.129, preferred: "yes" }
+  - { name: "HCS_NTP", server: 192.80.10.129, preferred: "no" }
+
+
+# ============================================================================================================================================================
+# SYSLOG
+# ============================================================================================================================================================
+
+syslog:
+  - { name: "HCS_SYSLOG_SPLUNK", server: 192.80.10.175, severity: "errors" }
+
+
+# ============================================================================================================================================================
+# SNMP
+# ============================================================================================================================================================
+
+snmp_coll:
+  - { name: "HCS_SNMP_SPECTRUM_PRI", ip: 192.64.10.135, community: "BKe8Tp4", version: "v2c" }
+  - { name: "HCS_SNMP_SPECTRUM_SEC", ip: 192.80.10.135, community: "BKe8Tp4", version: "v2c" }
+  - { name: "HCS_NETSHOT", ip: 192.80.10.182, community: "BKe8Tp4", version: "v2c" }
+
+snmp_pol:  
+  - { name: "SNMP_ASSU", snmp_svr: "HCS_SNMP_SPECTRUM_PRI", ip: 192.64.10.135, community: "BKe8Tp4", contact: "HCS Network Team - +33.142131470", location: "FR|DC2|ACI_ASU|PROD|LAN_DC|ACI_FABRIC|-|-|-" }  
+  - { name: "SNMP_ASSU", snmp_svr: "HCS_SNMP_SPECTRUM_SEC", ip: 192.80.10.135, community: "BKe8Tp4", contact: "HCS Network Team - +33.142131470", location: "FR|DC2|ACI_ASU|PROD|LAN_DC|ACI_FABRIC|-|-|-" } 
+  - { name: "SNMP_ASSU", snmp_svr: "HCS_NETSHOT", ip: 192.80.10.182, community: "BKe8Tp4", contact: "HCS Network Team - +33.142131470", location: "FR|DC2|ACI_ASU|PROD|LAN_DC|ACI_FABRIC|-|-|-" }
+
+snmp_mon:  
+  - { name: "HCS_SNMP_SPECTRUM_PRI" }  
+  - { name: "HCS_SNMP_SPECTRUM_SEC" } 
+  - { name: "HCS_NETSHOT" }
+
+
+# ============================================================================================================================================================
+# DNS
+# ============================================================================================================================================================
+
+dns_servers:
+  - { ip: "192.32.127.163", preferred: "yes"}
+  - { ip: "192.16.207.80", preferred: "no"}  
+
+dns_domains:
+  - { name: "arpege.socgen", default: "true" }
+
+
+tacacs_servers:
+
+  - { ip: "192.80.10.160", key: "<6gJ&Ty4" }
+  - { ip: "192.88.10.160", key: "<6gJ&Ty4" }
+
+tacacs_server_group:
+
+  - { name: "HCS_TACACS_Servers", server_ip: 192.80.10.160, order: 1 }
+  - { name: "HCS_TACACS_Servers", server_ip: 192.88.10.160, order: 2 }
+
+tacacs_domain:
+
+  - { name: HCS_TACACS, server_group: "HCS_TACACS_Servers" }
+
+# ============================================================================================================================================================
+# Multisite External Connection
+
+ex_conn:
+
+  - { pod_id: 1, mpod_tep: "13.254.11.7/32", site_id: 1 }     
